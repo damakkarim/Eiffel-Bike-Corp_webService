@@ -1,0 +1,13 @@
+package Repositories;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import Class.ExternalUser;
+
+public class ExternalUserRepo {
+	
+	private static Map<Long, ExternalUser> users = new HashMap<>();
+    private static long userIdCounter = 3L;
+
+}
