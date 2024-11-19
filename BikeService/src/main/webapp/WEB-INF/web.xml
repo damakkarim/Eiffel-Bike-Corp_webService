@@ -15,6 +15,6 @@
     
     <servlet-mapping>
         <servlet-name>JerseyServlet</servlet-name>
-        <url-pattern>/bike/*</url-pattern>
+        <url-pattern>/bank/*</url-pattern>
     </servlet-mapping>
 </web-app>
