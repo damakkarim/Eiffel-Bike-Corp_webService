@@ -5,6 +5,7 @@ import java.util.Map;
 
 import Class.GustaveUser;
 import Class.Role;
+import Services.IncorrectPasswordException;
 
 public class GustaveUserRepo {
 	
@@ -52,16 +53,24 @@ public class GustaveUserRepo {
     
     
 
-    // Se connecter (vérification de l'email et du mot de passe)
-    public static GustaveUser signIn(String email, String password) {
+    
+    
+ // Se connecter (vérification de l'email et du mot de passe)
+    public static GustaveUser signIn(String email, String password) throws IncorrectPasswordException {
         for (GustaveUser user : users.values()) {
-            if (user.getEmail().equalsIgnoreCase(email) && user.getPassword().equals(password)) {
-                return user;  // Retourner l'utilisateur si les informations sont correctes
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                if (user.getPassword().equals(password)) {
+                    return user;  // Retourner l'utilisateur si les informations sont correctes
+                } else {
+                    throw new IncorrectPasswordException("Incorrect email or password");
+                }
             }
         }
-        return null;  // Retourner null si les informations d'identification sont incorrectes
+        throw new IllegalArgumentException("User Not found.");
     }
 
+    
+    
     public static GustaveUser save(GustaveUser user) {
         if (user.getId() == null) {
             user.setId(++userIdCounter);

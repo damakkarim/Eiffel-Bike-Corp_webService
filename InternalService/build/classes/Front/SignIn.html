@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+    <style>
+        /* Ajoutez ici vos styles comme précédemment */
+        * {
+            font-family: 'Open Sans', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #111;
+            background-repeat: no-repeat;
+        }
+
+        .loginSection {
+            background: url(https://source.unsplash.com/TV2gg2kZD1o/1600x800);
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 450px;
+            text-align: center;
+            display: flex;
+            color: white;
+            box-shadow: 3px 10px 20px 5px rgba(0, 0, 0, .5);
+        }
+
+        .info {
+            width: 45%;
+            background: rgba(20, 20, 20, .8);
+            padding: 30px 0;
+            border-right: 5px solid rgba(30, 30, 30, .8);
+        }
+
+        .info h2 {
+            padding-top: 30px;
+            font-weight: 300;
+        }
+
+        .info p {
+            font-size: 18px;
+        }
+
+        .loginForm {
+            width: 70%;
+            padding: 30px 0;
+            background: rgba(20, 40, 40, .8);
+            transition: .2s;
+        }
+
+        .loginForm h2 {
+            font-weight: 300;
+        }
+
+        .inputFields {
+            margin: 15px 0;
+            font-size: 16px;
+            padding: 10px;
+            width: 250px;
+            border: 1px solid rgba(10, 180, 180, 1);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(20, 20, 20, .6);
+            color: white;
+            outline: none;
+        }
+
+        .noBullet {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #login-btn {
+            border: 1px solid rgba(10, 180, 180, 1);
+            background: rgba(20, 20, 20, .6);
+            font-size: 18px;
+            color: white;
+            margin-top: 20px;
+            padding: 10px 50px;
+            cursor: pointer;
+            transition: .4s;
+        }
+
+        #login-btn:hover {
+            background: rgba(20, 20, 20, .8);
+            padding: 10px 80px;
+        }
+
+        #errorMessage {
+            margin-top: 20px;
+            color: red;
+            font-weight: bold;
+        }
+
+        #signup-link {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #00ffcc;
+        }
+
+        #signup-link a {
+            color: #00ffcc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="loginSection">
+        <div class="info">
+            <h2>Welcome Back to Eiffel Bike Corp</h2>
+            <img src="../Utils/UGE_LOGO.png" alt="UGE Logo" style="width: 200px; height: auto; margin-top: 20px;">
+            <p>Login to Continue</p>
+        </div>
+        <form id="loginForm" class="loginForm">
+            <h2>Login</h2>
+            <ul class="noBullet">
+                <li>
+                    <input type="email" class="inputFields" id="email" placeholder="Email" required>
+                </li>
+                <li>
+                    <input type="password" class="inputFields" id="password" placeholder="Password" required>
+                </li>
+                <li id="center-btn">
+                    <input type="submit" id="login-btn" value="Login">
+                </li>
+            </ul>
+            <p id="errorMessage"></p>
+            <div id="signup-link">
+   			 <p>Don't have an account? No problem. <a href="Signup.html">Create one</a>.</p>
+            </div>
+        </form>
+    </div>
+
+
+
+
+
+
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const errorMessageDiv = document.getElementById('errorMessage'); // Pour afficher les erreurs
+
+        // Réinitialiser les messages d'erreur
+        errorMessageDiv.innerHTML = '';
+
+        // Collecter les données du formulaire
+        const userData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        
+        
+        
+        
+        
+        
+        
+        // Envoyer une requête POST
+        fetch('http://localhost:8080/InternalService/intern/gustaveUsers/signin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Incorrect email or password');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Connexion réussie, rediriger vers home.html
+                window.location.href = 'home.html';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessageDiv.innerHTML = `<p>${error.message}</p>`; // Affiche l'erreur
+            });
+    });
+    </script>
+</body>
+</html>

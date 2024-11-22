@@ -46,20 +46,39 @@ public class GustaveUserService {
     
     
     
-    
     @POST
     @Path("/signin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response signIn(GustaveUser user) {
         try {
+            // Tentative de connexion
             GustaveUser authenticatedUser = GustaveUserRepo.signIn(user.getEmail(), user.getPassword());
+            
+            // Si l'authentification réussie, on renvoie l'utilisateur
             return Response.ok(authenticatedUser).build();
-        } catch (IllegalArgumentException e) {
+        } catch (IncorrectPasswordException e) {
+            // Si le mot de passe est incorrect, on renvoie un message d'erreur spécifique
+            String errorMessage = "{\"error\": \"Incorrect  password.\"}";
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(e.getMessage()).build();
+                           .entity(errorMessage)  // Envoi du message d'erreur en JSON
+                           .build();
+        } catch (IllegalArgumentException e) {
+            // Autres erreurs d'argument (par exemple, utilisateur non trouvé)
+            String errorMessage = "{\"error\": \"" + e.getMessage() + "\"}";
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity(errorMessage)  // Envoi du message d'erreur en JSON
+                           .build();
+        } catch (Exception e) {
+            // Gestion des erreurs générales
+            String errorMessage = "{\"error\": \"Une erreur interne est survenue.\"}";
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity(errorMessage)  // Envoi du message d'erreur en JSON
+                           .build();
         }
     }
+
+
 
     @GET
     @Path("/{id}")
