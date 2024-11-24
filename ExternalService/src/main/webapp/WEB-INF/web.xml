@@ -8,7 +8,7 @@
         <init-param>
             <!-- Indique le package contenant les services REST -->
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>Services</param-value>
+            <param-value>Services;Front</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

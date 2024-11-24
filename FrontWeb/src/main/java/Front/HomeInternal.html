@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficher les Vélos</title>
+</head>
+<body>
+    <h1>Liste des vélos</h1>
+    <div id="errorMessage"></div> <!-- Affichage des erreurs -->
+    <ul id="bikeList"></ul> <!-- Liste des vélos -->
+
+    <script>
+        // Fonction pour récupérer et afficher les vélos
+        function fetchBikes() {
+            fetch('http://localhost:8080/BikeService/bike/bikes')
+                .then(response => {
+                    // Vérifier si la requête a réussi
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Erreur de récupération des vélos');
+                        });
+                    }
+                    return response.json(); // Retourner les données au format JSON
+                })
+                .then(data => {
+                    // Si les données sont valides, les afficher
+                    displayBikes(data);
+                })
+                .catch(error => {
+                    // Si une erreur se produit, afficher le message d'erreur
+                    document.getElementById('errorMessage').innerHTML = `<p>${error.message}</p>`;
+                });
+        }
+
+        // Fonction pour afficher les vélos dans la page
+        function displayBikes(bikes) {
+            const bikeList = document.getElementById('bikeList');
+            bikeList.innerHTML = ''; // Vider la liste avant de la remplir
+
+            // Vérifier si des vélos existent
+            if (bikes.length === 0) {
+                bikeList.innerHTML = '<li>Aucun vélo disponible.</li>';
+                return;
+            }
+
+            // Ajouter chaque vélo à la liste
+            bikes.forEach(bike => {
+                const li = document.createElement('li');
+                li.textContent = `Vélo: ${bike.name}, Type: ${bike.type}, Disponibilité: ${bike.available ? 'Disponible' : 'Indisponible'}`;
+                bikeList.appendChild(li);
+            });
+        }
+
+        // Appeler la fonction pour récupérer les vélos lors du chargement de la page
+        window.onload = fetchBikes;
+    </script>
+</body>
+</html>
