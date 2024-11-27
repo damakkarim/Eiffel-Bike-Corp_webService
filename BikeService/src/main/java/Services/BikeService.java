@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -180,5 +181,32 @@ public class BikeService {
                     .entity("L'utilisateur n'est pas dans la liste d'attente ou le vélo n'existe pas ou vélo deja disponible.").build();
         }
     }
+    
+    
+    
+    
+    
+    @OPTIONS
+    @Path("{path:.*}")
+    public Response handlePreflight() {
+        return Response.ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+                .build();
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 }

@@ -11,7 +11,7 @@ public class BikeRepo {
 
     static {
         Bike bike1 = new Bike(1L, "Model A", 200.0, "poor", true, null, 5, "First bike");
-        Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", true, null, 0, "Second bike");
+        Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", false, null, 0, "Second bike");
         bikes.put(1L, bike1);
         bikes.put(2L, bike2);
         

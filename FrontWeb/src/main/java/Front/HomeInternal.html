@@ -3,57 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afficher les Vélos</title>
+    <title>Bike Availability</title>
+    <style>
+        * {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #111;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* En-tête pour afficher le nom et le prénom en haut à droite */
+        .header {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .bikeSection {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 1200px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 3px 10px 20px rgba(0, 0, 0, .5);
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 300;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            background-color: #1e2a3a;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #1A65A9;
+            color: white;
+        }
+
+        td {
+            color: white;
+        }
+
+        .status {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+
+        .available {
+            background-color: green;
+        }
+
+        .unavailable {
+            background-color: red;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            margin: 2px;
+            background: rgba(10, 180, 180, 1);
+        }
+
+        .rent-btn {
+            background-color: #28a745;
+        }
+
+        .waitlist-btn {
+            background-color: #fd7e14;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        td, th {
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .action-btn:focus {
+            outline: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Liste des vélos</h1>
-    <div id="errorMessage"></div> <!-- Affichage des erreurs -->
-    <ul id="bikeList"></ul> <!-- Liste des vélos -->
+    <!-- Affichage du nom et prénom en haut à droite -->
+    <div class="header">
+        Bienvenue, <span id="userName">Nom Prénom</span>
+    </div>
+
+    <div class="bikeSection">
+        <h1>Bike Availability</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Model</th>
+                    <th>Price (€)</th>
+                    <th>Condition</th>
+                    <th>Added Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="bikeTableBody">
+                <!-- Bikes will be loaded here dynamically -->
+            </tbody>
+        </table>
+    </div>
 
     <script>
-        // Fonction pour récupérer et afficher les vélos
-        function fetchBikes() {
-            fetch('http://localhost:8080/BikeService/bike/bikes')
-                .then(response => {
-                    // Vérifier si la requête a réussi
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.error || 'Erreur de récupération des vélos');
-                        });
+ // Récupérer les informations de l'utilisateur depuis localStorage
+    const firstName = localStorage.getItem("userFirstName");
+    const lastName = localStorage.getItem("userLastName");
+
+    // Afficher le nom et prénom de l'utilisateur dans l'élément avec l'ID 'userName'
+    if (firstName && lastName) {
+        document.getElementById("userName").textContent = `${firstName} ${lastName}`;
+    } else {
+        document.getElementById("userName").textContent = "Utilisateur inconnu";
+    }
+
+        // URL for the bike service
+        const bikeServiceUrl = "http://localhost:8080/BikeService/bike/bikes";
+
+        // Function to fetch and display bikes
+        async function fetchBikes() {
+            try {
+                const response = await fetch(bikeServiceUrl);
+                const bikes = await response.json();
+
+                // Select table body
+                const bikeTableBody = document.getElementById("bikeTableBody");
+                bikeTableBody.innerHTML = "";
+
+                // Iterate over the bikes and add them to the table
+                Object.values(bikes).forEach(bike => {
+                    const row = document.createElement("tr");
+
+                    // ID column
+                    const idCell = document.createElement("td");
+                    idCell.textContent = bike.id;
+                    row.appendChild(idCell);
+
+                    // Model column
+                    const modelCell = document.createElement("td");
+                    modelCell.textContent = bike.model || "N/A";
+                    row.appendChild(modelCell);
+
+                    // Price column
+                    const priceCell = document.createElement("td");
+                    priceCell.textContent = bike.price || "N/A";
+                    row.appendChild(priceCell);
+
+                    // Condition column
+                    const conditionCell = document.createElement("td");
+                    conditionCell.textContent = bike.condition || "N/A";
+                    row.appendChild(conditionCell);
+
+                    // Added Date column
+                    const dateCell = document.createElement("td");
+                    dateCell.textContent = bike.dateAdded || "N/A";
+                    row.appendChild(dateCell);
+
+                    // Statut column
+                    const statusCell = document.createElement("td");
+                    const statusIndicator = document.createElement("span");
+                    let statusText = "";
+
+                    if (bike.available) {
+                        statusIndicator.classList.add("status", "available");
+                        statusText = " Free ";
+                    } else if (bike.status === "reserved") {
+                        statusIndicator.classList.add("status", "reserved");
+                        statusText = " Reserved ";
+                    } else {
+                        statusIndicator.classList.add("status", "unavailable");
+                        statusText = " Unavailable ";
                     }
-                    return response.json(); // Retourner les données au format JSON
-                })
-                .then(data => {
-                    // Si les données sont valides, les afficher
-                    displayBikes(data);
-                })
-                .catch(error => {
-                    // Si une erreur se produit, afficher le message d'erreur
-                    document.getElementById('errorMessage').innerHTML = `<p>${error.message}</p>`;
+
+                    statusCell.textContent = statusText;
+                    statusCell.appendChild(statusIndicator);
+                    row.appendChild(statusCell);
+
+                    // Actions column
+                    const actionsCell = document.createElement("td");
+                    if (bike.available) {
+                        const rentButton = document.createElement("button");
+                        rentButton.textContent = "Rent";
+                        rentButton.classList.add("action-btn", "rent-btn");
+                        rentButton.onclick = () => rentBike(bike.id);
+                        actionsCell.appendChild(rentButton);
+                    } else {
+                        const waitlistButton = document.createElement("button");
+                        waitlistButton.textContent = "Add to Waitlist";
+                        waitlistButton.classList.add("action-btn", "waitlist-btn");
+                        waitlistButton.onclick = () => addToWaitlist(bike.id);
+                        actionsCell.appendChild(waitlistButton);
+                    }
+                    row.appendChild(actionsCell);
+
+                    // Add the row to the table
+                    bikeTableBody.appendChild(row);
                 });
-        }
-
-        // Fonction pour afficher les vélos dans la page
-        function displayBikes(bikes) {
-            const bikeList = document.getElementById('bikeList');
-            bikeList.innerHTML = ''; // Vider la liste avant de la remplir
-
-            // Vérifier si des vélos existent
-            if (bikes.length === 0) {
-                bikeList.innerHTML = '<li>Aucun vélo disponible.</li>';
-                return;
+            } catch (error) {
+                console.error("Error fetching bikes:", error);
             }
-
-            // Ajouter chaque vélo à la liste
-            bikes.forEach(bike => {
-                const li = document.createElement('li');
-                li.textContent = `Vélo: ${bike.name}, Type: ${bike.type}, Disponibilité: ${bike.available ? 'Disponible' : 'Indisponible'}`;
-                bikeList.appendChild(li);
-            });
         }
 
-        // Appeler la fonction pour récupérer les vélos lors du chargement de la page
-        window.onload = fetchBikes;
+        // Function to rent a bike
+        async function rentBike(bikeId) {
+            try {
+                const response = await fetch(`http://localhost:8080/BikeService/bikes/rent/${bikeId}`, {
+                    method: "POST",
+                });
+                const message = await response.text();
+                alert(message);
+                fetchBikes(); // Refresh the bike list
+            } catch (error) {
+                console.error("Error renting the bike:", error);
+            }
+        }
+
+        // Function to add to the waitlist
+        async function addToWaitlist(bikeId) {
+            const userId = prompt("Enter your user ID for the waitlist:");
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`http://localhost:8080/BikeService/bikes/waitlist/${bikeId}/${userId}`, {
+                    method: "POST",
+                });
+                const message = await response.text();
+                alert(message);
+                fetchBikes(); // Refresh the bike list
+            } catch (error) {
+                console.error("Error adding to the waitlist:", error);
+            }
+        }
+
+        // Load bikes on page load
+        fetchBikes();
     </script>
 </body>
 </html>

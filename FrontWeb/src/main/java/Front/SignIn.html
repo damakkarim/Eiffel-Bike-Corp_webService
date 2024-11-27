@@ -80,7 +80,7 @@
         }
 
         #login-btn {
-            border: 1px solid rgba(10, 180, 180, 1);
+            border: 1px solid rgb(10, 180, 180);
             background: rgba(20, 20, 20, .6);
             font-size: 18px;
             color: white;
@@ -145,11 +145,6 @@
         </form>
     </div>
 
-
-
-
-
-
     <script>
     document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -165,13 +160,6 @@
             password: document.getElementById('password').value
         };
 
-        
-        
-        
-        
-        
-        
-        
         // Envoyer une requête POST
         fetch('http://localhost:8080/InternalService/intern/gustaveUsers/signin', {
             method: 'POST',
@@ -189,8 +177,13 @@
                 return response.json();
             })
             .then(data => {
-                // Connexion réussie, rediriger vers home.html
-                window.location.href = 'home.html';
+                // Connexion réussie, enregistrer l'ID de l'utilisateur et d'autres données si nécessaire
+                localStorage.setItem('userId', data.userId); // Stocke l'ID de l'utilisateur
+                localStorage.setItem('userName', data.name); // Optionnel : Si vous voulez stocker aussi le nom
+                localStorage.setItem('userSurname', data.surname); // Optionnel : Si vous voulez stocker aussi le prénom
+
+                // Rediriger vers HomeInternal.html
+                window.location.href = 'HomeInternal.html';
             })
             .catch(error => {
                 console.error('Error:', error);
