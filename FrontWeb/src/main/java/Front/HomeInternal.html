@@ -8,7 +8,6 @@
         * {
             font-family: 'Open Sans', sans-serif;
         }
-
         body {
             margin: 0;
             padding: 0;
@@ -17,17 +16,30 @@
             background-repeat: no-repeat;
             background-size: cover;
         }
-
-        /* En-tête pour afficher le nom et le prénom en haut à droite */
         .header {
             position: absolute;
             top: 10px;
-            right: 20px;
+            left: 20px; /* Message aligné à gauche */
             color: white;
-            font-size: 18px;
+            font-size: 28px;
             font-weight: 600;
         }
-
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            margin-left: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute; /* Position du bouton à droite */
+            top: 10px;
+            right: 20px;
+        }
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
         .bikeSection {
             position: absolute;
             top: 50%;
@@ -44,13 +56,11 @@
             border-radius: 10px;
             box-shadow: 3px 10px 20px rgba(0, 0, 0, .5);
         }
-
         h1 {
             font-size: 36px;
             font-weight: 300;
             margin-top: 20px;
         }
-
         table {
             width: 100%;
             margin: 20px 0;
@@ -59,38 +69,34 @@
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
-
         th, td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: center;
             font-size: 16px;
         }
-
         th {
             background-color: #1A65A9;
             color: white;
         }
-
         td {
             color: white;
         }
-
         .status {
             display: inline-block;
             width: 15px;
             height: 15px;
             border-radius: 50%;
         }
-
         .available {
             background-color: green;
         }
-
+        .reserved {
+            background-color: orange;
+        }
         .unavailable {
             background-color: red;
         }
-
         .action-btn {
             padding: 8px 15px;
             cursor: pointer;
@@ -99,37 +105,33 @@
             color: #fff;
             font-size: 14px;
             margin: 2px;
-            background: rgba(10, 180, 180, 1);
         }
-
         .rent-btn {
             background-color: #28a745;
         }
-
         .waitlist-btn {
             background-color: #fd7e14;
         }
-
         .action-btn:hover {
             opacity: 0.8;
         }
-
         td, th {
             font-weight: 500;
             font-size: 18px;
         }
-
         .action-btn:focus {
             outline: none;
         }
     </style>
 </head>
 <body>
-    <!-- Affichage du nom et prénom en haut à droite -->
+    <!-- Header -->
     <div class="header">
-        Bienvenue, <span id="userName">Nom Prénom</span>
+        Welcome <span id="userName">Nom Prénom</span> !
     </div>
+<button id="logoutBtn" class="action-btn logout-btn" onclick="logout()">Deconnect</button>
 
+    <!-- Bike Section -->
     <div class="bikeSection">
         <h1>Bike Availability</h1>
         <table>
@@ -137,7 +139,6 @@
                 <tr>
                     <th>ID</th>
                     <th>Model</th>
-                    <th>Price (€)</th>
                     <th>Condition</th>
                     <th>Added Date</th>
                     <th>Status</th>
@@ -151,19 +152,42 @@
     </div>
 
     <script>
- // Récupérer les informations de l'utilisateur depuis localStorage
-    const firstName = localStorage.getItem("userFirstName");
-    const lastName = localStorage.getItem("userLastName");
-
-    // Afficher le nom et prénom de l'utilisateur dans l'élément avec l'ID 'userName'
-    if (firstName && lastName) {
-        document.getElementById("userName").textContent = `${firstName} ${lastName}`;
-    } else {
-        document.getElementById("userName").textContent = "Utilisateur inconnu";
-    }
-
-        // URL for the bike service
         const bikeServiceUrl = "http://localhost:8080/BikeService/bike/bikes";
+        const userServiceUrl = "http://localhost:8080/InternalService/intern/gustaveUsers/FindByEmail";
+
+        // Fetch user email from localStorage
+        const userEmail = localStorage.getItem('userEmail');
+        if (!userEmail) {
+            alert("User not logged in. Redirecting to login page...");
+            window.location.href = 'Login.html'; // Redirect to login page
+        }
+
+        // Logout function
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("userEmail");
+            window.location.href = 'HomeInternal.html'; // Redirect to HomeInternal.html
+        });
+
+        // Fetch and display user details by email
+        async function fetchUserDetails(email) {
+            try {
+                const response = await fetch(`${userServiceUrl}/${email}`);
+                if (response.ok) {
+                    const user = await response.json();
+                    displayUserDetails(user);
+                } else {
+                    console.error("Failed to fetch user details:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error fetching user details:", error);
+            }
+        }
+
+        // Display user details on the page
+        function displayUserDetails(user) {
+            const userNameElement = document.getElementById("userName");
+            userNameElement.textContent = user.name || "Utilisateur inconnu";
+        }
 
         // Function to fetch and display bikes
         async function fetchBikes() {
@@ -189,11 +213,6 @@
                     modelCell.textContent = bike.model || "N/A";
                     row.appendChild(modelCell);
 
-                    // Price column
-                    const priceCell = document.createElement("td");
-                    priceCell.textContent = bike.price || "N/A";
-                    row.appendChild(priceCell);
-
                     // Condition column
                     const conditionCell = document.createElement("td");
                     conditionCell.textContent = bike.condition || "N/A";
@@ -204,7 +223,7 @@
                     dateCell.textContent = bike.dateAdded || "N/A";
                     row.appendChild(dateCell);
 
-                    // Statut column
+                    // Status column
                     const statusCell = document.createElement("td");
                     const statusIndicator = document.createElement("span");
                     let statusText = "";
@@ -249,12 +268,10 @@
             }
         }
 
-        // Function to rent a bike
+        // Rent a bike
         async function rentBike(bikeId) {
             try {
-                const response = await fetch(`http://localhost:8080/BikeService/bikes/rent/${bikeId}`, {
-                    method: "POST",
-                });
+                const response = await fetch(`http://localhost:8080/BikeService/bikes/rent/${bikeId}`, { method: "POST" });
                 const message = await response.text();
                 alert(message);
                 fetchBikes(); // Refresh the bike list
@@ -263,15 +280,10 @@
             }
         }
 
-        // Function to add to the waitlist
+        // Add to the waitlist
         async function addToWaitlist(bikeId) {
-            const userId = prompt("Enter your user ID for the waitlist:");
-            if (!userId) return;
-
             try {
-                const response = await fetch(`http://localhost:8080/BikeService/bikes/waitlist/${bikeId}/${userId}`, {
-                    method: "POST",
-                });
+                const response = await fetch(`http://localhost:8080/BikeService/bikes/waitlist/${bikeId}`, { method: "POST" });
                 const message = await response.text();
                 alert(message);
                 fetchBikes(); // Refresh the bike list
@@ -279,8 +291,16 @@
                 console.error("Error adding to the waitlist:", error);
             }
         }
+        
+        
+        function logout() {
+            // Redirection vers la page signin.html
+            window.location.href = "SignIn.html";
+        }
 
-        // Load bikes on page load
+
+        // Initialize the page
+        fetchUserDetails(userEmail);
         fetchBikes();
     </script>
 </body>

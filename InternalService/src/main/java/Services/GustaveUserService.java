@@ -96,6 +96,23 @@ public class GustaveUserService {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found").build(); // Renvoie un code 404 si l'utilisateur n'existe pas
         }
     }
+        @GET
+        @Path("/FindByEmail/{email}")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getUserByEmail(@PathParam("email") String email) {
+            System.out.println("Email received: " + email); // Ligne de débogage
+            if (email == null || email.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Email is null or empty").build();
+            }
+
+            GustaveUser user = GustaveUserRepo.getUserByEmail(email);
+            if (user != null) {
+                return Response.ok(user).build(); // Renvoie l'utilisateur en JSON
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("User not found").build(); // Renvoie un code 404 si l'utilisateur n'existe pas
+            }
+        
+    }
 
     
 

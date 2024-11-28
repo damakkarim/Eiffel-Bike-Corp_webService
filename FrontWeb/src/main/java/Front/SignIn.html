@@ -140,56 +140,57 @@
             </ul>
             <p id="errorMessage"></p>
             <div id="signup-link">
-   			 <p>Don't have an account? No problem. <a href="Signup.html">Create one</a>.</p>
+                <p>Don't have an account? No problem. <a href="Signup.html">Create one</a>.</p>
             </div>
         </form>
     </div>
 
     <script>
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        const errorMessageDiv = document.getElementById('errorMessage'); // Pour afficher les erreurs
+            // Récupérer les champs du formulaire
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-        // Réinitialiser les messages d'erreur
-        errorMessageDiv.innerHTML = '';
+            // Construire l'objet utilisateur
+            const userData = {
+                email: email,
+                password: password
+            };
 
-        // Collecter les données du formulaire
-        const userData = {
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value
-        };
+            const errorMessageDiv = document.getElementById('errorMessage'); // Pour afficher les erreurs
+            errorMessageDiv.innerHTML = ''; // Réinitialiser les messages d'erreur
 
-        // Envoyer une requête POST
-        fetch('http://localhost:8080/InternalService/intern/gustaveUsers/signin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.error || 'Incorrect email or password');
-                    });
-                }
-                return response.json();
+            // Envoyer une requête POST
+            fetch('http://localhost:8080/InternalService/intern/gustaveUsers/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
             })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Incorrect email or password');
+                        });
+                    }
+                    return response.json();
+                })
             .then(data => {
-                // Connexion réussie, enregistrer l'ID de l'utilisateur et d'autres données si nécessaire
-                localStorage.setItem('userId', data.userId); // Stocke l'ID de l'utilisateur
-                localStorage.setItem('userName', data.name); // Optionnel : Si vous voulez stocker aussi le nom
-                localStorage.setItem('userSurname', data.surname); // Optionnel : Si vous voulez stocker aussi le prénom
+    // Stocker l'email dans localStorage
+    localStorage.setItem('userEmail', email);
 
-                // Rediriger vers HomeInternal.html
-                window.location.href = 'HomeInternal.html';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorMessageDiv.innerHTML = `<p>${error.message}</p>`; // Affiche l'erreur
-            });
-    });
+    // Redirection vers la page d'accueil
+    window.location.href = 'HomeInternal.html';
+})
+
+                .catch(error => {
+                    console.error('Error:', error);
+                    errorMessageDiv.innerHTML = `<p>${error.message}</p>`; // Affiche l'erreur
+                });
+        });
     </script>
 </body>
 </html>
