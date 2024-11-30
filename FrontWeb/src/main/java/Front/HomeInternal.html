@@ -159,7 +159,7 @@
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) {
             alert("User not logged in. Redirecting to login page...");
-            window.location.href = 'Login.html'; // Redirect to login page
+            window.location.href = 'SignIn.html'; // Redirect to login page
         }
 
         // Logout function
@@ -268,29 +268,84 @@
             }
         }
 
-        // Rent a bike
         async function rentBike(bikeId) {
             try {
-                const response = await fetch(`http://localhost:8080/BikeService/bikes/rent/${bikeId}`, { method: "POST" });
+                console.log(`Attempting to rent bike with ID: ${bikeId}`);
+
+                // Demander la confirmation à l'utilisateur
+                const confirmRental = confirm(`Are you sure you want to rent the bike with ID: ${bikeId}?`);
+                if (!confirmRental) {
+                    alert("Rental cancelled.");
+                    return; // Annuler si l'utilisateur n'a pas confirmé
+                }
+
+                // Envoyer la requête pour louer le vélo
+                const response = await fetch(`http://localhost:8080/BikeService/bike/bikes/rent/${bikeId}`, { method: "POST" });
                 const message = await response.text();
-                alert(message);
-                fetchBikes(); // Refresh the bike list
+                alert(message); // Afficher le message de confirmation ou d'erreur
+                fetchBikes(); // Rafraîchir la liste des vélos
             } catch (error) {
                 console.error("Error renting the bike:", error);
             }
         }
 
-        // Add to the waitlist
+     // Add to the waitlist
         async function addToWaitlist(bikeId) {
             try {
-                const response = await fetch(`http://localhost:8080/BikeService/bikes/waitlist/${bikeId}`, { method: "POST" });
-                const message = await response.text();
-                alert(message);
-                fetchBikes(); // Refresh the bike list
+                // Fetch user details to get the userId
+                const userEmail = localStorage.getItem('userEmail');
+                if (!userEmail) {
+                    alert("User email not found. Please log in again.");
+                    window.location.href = 'SignIn.html'; // Redirect to login
+                    return;
+                }
+
+                const response = await fetch(`${userServiceUrl}/${userEmail}`);
+                if (!response.ok) {
+                    console.error("Failed to fetch user details:", response.statusText);
+                    alert("Unable to fetch user details. Please try again later.");
+                    return;
+                }
+
+                const user = await response.json();
+                const userId = user.id; // Assuming the user object contains an id field
+                if (!userId) {
+                    console.error("User ID not found.");
+                    alert("Unable to retrieve user ID. Please try again.");
+                    return;
+                }
+
+                // Ask for user confirmation
+                const confirmWaitlist = confirm(`Are you sure you want to add to the waitlist for bike ID: ${bikeId}?`);
+                if (!confirmWaitlist) {
+                    alert("Action cancelled.");
+                    return;
+                }
+
+                // Send a POST request to add to the waitlist
+                const waitlistResponse = await fetch(`http://localhost:8080/BikeService/bike/bikes/waitlist/${bikeId}/${userId}`, {
+                    method: "POST"
+                });
+
+                if (waitlistResponse.ok) {
+                    const message = await waitlistResponse.text();
+                    alert(message); // Display success message
+                    fetchBikes(); // Refresh the bike list
+                } else {
+                    const errorMessage = await waitlistResponse.text();
+                    console.error("Failed to add to waitlist:", errorMessage);
+                    alert(errorMessage); // Display failure message
+                }
             } catch (error) {
-                console.error("Error adding to the waitlist:", error);
+                console.error("Error adding to waitlist:", error);
+                alert("An unexpected error occurred. Please try again later.");
             }
         }
+
+
+
+        
+        
         
         
         function logout() {

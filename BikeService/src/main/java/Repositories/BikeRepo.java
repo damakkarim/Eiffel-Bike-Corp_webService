@@ -59,13 +59,19 @@ public class BikeRepo {
         }
     }
 
-    public static boolean ajouterALaListeDAttente(Long bikeId, GustaveUser user) {
+    public static String ajouterALaListeDAttente(Long bikeId, GustaveUser user) {
         Bike bike = bikes.get(bikeId);
-        if (bike != null && !bike.getWaitingList().contains(user) && bike.isAvailable()==false) {
-            bike.getWaitingList().add(user);
-            return true;
+        if (bike == null) {
+            return "VELO_INEXISTANT"; // Le vélo n'existe pas.
         }
-        return false;
+        if (bike.isAvailable()) {
+            return "VELO_DISPONIBLE"; // Le vélo est disponible.
+        }
+        if (bike.getWaitingList().contains(user)) {
+            return "UTILISATEUR_DEJA_DANS_LA_LISTE"; // L'utilisateur est déjà dans la liste d'attente.
+        }
+        bike.getWaitingList().add(user); // Ajoute l'utilisateur à la liste d'attente.
+        return "AJOUT_REUSSI"; // L'ajout a réussi.
     }
 
 
