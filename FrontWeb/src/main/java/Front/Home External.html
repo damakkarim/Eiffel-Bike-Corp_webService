@@ -1,10 +1,178 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Availability</title>
+    <style>
+        * {
+            font-family: 'Open Sans', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #111;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .rented-bike {
+    background-color: #FBC02D; /* Jaune plus foncé et plus subtil */
+}
+        
+        .header {
+            position: relative;
+            display: flex;
+            justify-content: space-between; /* Aligne le texte à droite et l'image au centre */
+            align-items: center;
+            padding: 10px 20px;
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%); /* Centre l'image */
+            width: 200px;
+            height: auto;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
+        .bikeSection {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 1200px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 3px 10px 20px rgba(0, 0, 0, .5);
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: 300;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            background-color: #1e2a3a;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+        th {
+            background-color: #1A65A9;
+            color: white;
+        }
+        td {
+            color: white;
+        }
+        .status {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+        .available {
+            background-color: green;
+        }
+        .reserved {
+            background-color: orange;
+        }
+        .unavailable {
+            background-color: red;
+        }
+        .action-btn {
+            padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            margin: 2px;
+        }
+        .rent-btn {
+            background-color: #28a745;
+        }
+        .waitlist-btn {
+            background-color: #fd7e14;
+        }
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        td, th {
+            font-weight: 500;
+            font-size: 18px;
+        }
+        .action-btn:focus {
+            outline: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <div class="header">
+        <img src="../Utils/UGE_LOGO_white.png" alt="Logo Gustave Eiffel" class="logo">
+        <span>Welcome <span id="userName">Nom Prénom</span>!</span>
+    </div>
+    
+<button id="logoutBtn" class="action-btn logout-btn" onclick="logout()">Deconnect</button>
+    <!-- Message will be displayed here -->
 
+    <!-- Bike Section -->
+    <div class="bikeSection">
+        <h1>Bike Availability</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Model</th>
+                    <th>Condition</th>
+                    
+                    
+                    <th>Added Date</th>
+                                             <th>Notes</th>
+                    
+                    <th>Status</th>
+                    
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="bikeTableBody">
+                <!-- Bikes will be loaded here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        
+    </script>
 </body>
 </html>

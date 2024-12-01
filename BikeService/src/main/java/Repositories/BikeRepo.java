@@ -76,19 +76,19 @@ public class BikeRepo {
 
         if (bike != null && !bike.isAvailable()) { // Vérifie si le vélo est non disponible
             bike.setAvailable(true); // Marque le vélo comme disponible
+            bike.setRentedBy(null); // Réinitialise le propriétaire
 
             if (notes != null && !notes.isEmpty()) { // Vérifie si des notes sont fournies
-                // Si le vélo a déjà des notes, on ajoute la nouvelle note à la liste
-                if (bike.getNotes() != null) {
-                    bike.getNotes().add(notes); // Ajoute la nouvelle note à la liste existante
-                } else {
-                    List<String> newNotes = new ArrayList<>();
-                    newNotes.add(notes); // Crée une nouvelle liste de notes si aucune n'existait
-                    bike.setNotes(newNotes); // Associe la nouvelle liste de notes au vélo
+                // Si le vélo a déjà des notes, on ajoute la nouvelle note à la liste, sinon on crée une nouvelle liste
+                if (bike.getNotes() == null) {
+                    bike.setNotes(new ArrayList<>()); // Crée une nouvelle liste de notes si elle est nulle
                 }
+                bike.getNotes().add(notes); // Ajoute la nouvelle note à la liste
             }
         }
     }
+
+    
 
 
 

@@ -124,6 +124,10 @@
         .waitlist-btn {
             background-color: #fd7e14;
         }
+        
+         .return-btn {
+            background-color: #ff0000;
+        }
         .action-btn:hover {
             opacity: 0.8;
         }
@@ -172,10 +176,15 @@
     </div>
 
     <script>
+    
+    
+
         const bikeServiceUrl = "http://localhost:8080/BikeService/bike/bikes";
         const userServiceUrl = "http://localhost:8080/InternalService/intern/gustaveUsers/FindByEmail";
 
-        // Fetch user email from localStorage
+        let CurrentUser=null;
+        
+        
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) {
             alert("User not logged in. Redirecting to login page...");
@@ -194,6 +203,8 @@
                 const response = await fetch(`${userServiceUrl}/${email}`);
                 if (response.ok) {
                     const user = await response.json();
+                    console.log("LaaaaaaA :   "+user.email);
+                    CurrentUser=user;
                     displayUserDetails(user);
                 } else {
                     console.error("Failed to fetch user details:", response.statusText);
@@ -208,6 +219,13 @@
             const userNameElement = document.getElementById("userName");
             userNameElement.textContent = user.name || "Utilisateur inconnu";
         }
+        
+        
+        
+        
+
+        
+        
 
      // Function to fetch and display bikes
         async function fetchBikes() {
@@ -218,6 +236,9 @@
                 // Select table body
                 const bikeTableBody = document.getElementById("bikeTableBody");
                 bikeTableBody.innerHTML = "";
+
+                // Assume the userId is available in localStorage
+                const userId = localStorage.getItem('userId'); // Get the userId from localStorage
 
                 // Iterate over the bikes and add them to the table
                 Object.values(bikes).forEach(bike => {
@@ -284,19 +305,41 @@
 
                     // Actions column
                     const actionsCell = document.createElement("td");
-                    if (bike.available) {
+
+                    
+
+                    // If the bike is available, show Rent button
+                    if (bike.rentedBy==null) {
                         const rentButton = document.createElement("button");
                         rentButton.textContent = "Rent";
                         rentButton.classList.add("action-btn", "rent-btn");
-                        rentButton.onclick = () => rentBike(bike.id);
+                        rentButton.onclick = () => {
+                            rentBike(bike.id);
+                        };
                         actionsCell.appendChild(rentButton);
-                    } else {
+
+                    } else if ( bike.rentedBy.id === CurrentUser.id) {
+                        const returnButton = document.createElement("button");
+                        returnButton.textContent = "Return";
+                        returnButton.classList.add("action-btn", "return-btn");
+                        returnButton.onclick = () => {
+                            returnBike(bike.id);
+                        };
+                        actionsCell.appendChild(returnButton);
+
+                    }  else if (bike.rentedBy!=null) { // If the bike is not available and not rented by the current user
+                    	
+                    	console.log("ena fil cas tee waitng list ")
                         const waitlistButton = document.createElement("button");
                         waitlistButton.textContent = "Add to Waitlist";
                         waitlistButton.classList.add("action-btn", "waitlist-btn");
-                        waitlistButton.onclick = () => addToWaitlist(bike.id);
+                        waitlistButton.onclick = () => {
+                            addToWaitlist(bike.id);
+                            alert("You have added this bike to the waitlist.");
+                        };
                         actionsCell.appendChild(waitlistButton);
                     }
+
                     row.appendChild(actionsCell);
 
                     // Add the row to the table
@@ -309,6 +352,35 @@
 
      
      
+        async function    returnBike (bikeId) {
+        	// Send a POST request to add to the waitlist
+
+            const returnResponse = await fetch(`http://localhost:8080/BikeService/bike/bikes/return/${bikeId}`, {
+                method: "POST"
+            });
+
+
+            if (returnResponse.ok) {
+                const message = await returnResponse.text();
+                alert(message); // Display success message
+                fetchBikes(); // Refresh the bike list
+
+            } else {
+
+                const errorMessage = await returnResponse.text();
+
+                console.error("Failed to return  this bike !", errorMessage);
+
+                alert(errorMessage); // Display failure message
+
+            }
+
+        	
+        	
+        	
+        	
+        	
+        }
      
      
         async function rentBike(bikeId) {
@@ -393,7 +465,6 @@ async function addToWaitlist(bikeId) {
                     return;
 
                 }
-
 
 
                 const user = await response.json();
