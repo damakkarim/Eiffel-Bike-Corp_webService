@@ -110,6 +110,24 @@ public class BikeService {
 
     
     
+    @GET
+    @Path("/rented/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRentedBikesByUser(@PathParam("userId") Long userId) {
+        // Récupérer le vélo loué par l'utilisateur depuis le repository
+        Bike rentedBike = BikeRepo.getRentedBikeByUser(userId);
+        
+        // Vérifier si un vélo a été trouvé
+        if (rentedBike == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No bikes rented by this user.")
+                    .build();
+        }
+
+        // Retourner le vélo trouvé avec un code de succès
+        return Response.ok(rentedBike).build();
+    }
+    
     
     
     @POST

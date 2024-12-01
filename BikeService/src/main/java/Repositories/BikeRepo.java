@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import Class.Bike;
 import Class.GustaveUser;
@@ -14,11 +15,17 @@ public class BikeRepo {
     static {
     	// Creating a bike with a list of notes
     	Bike bike1 = new Bike(1L, "Model A", 200.0, "poor", true, new ArrayList<>(List.of("-First bike", "-Needs repair", "-Popular model")), 5);
-    	Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", false, new ArrayList<>(List.of("-Second bike", "-Recently serviced", "-Good condition")), 0);
+    	Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", true, new ArrayList<>(List.of("-Second bike", "-Recently serviced", "-Good condition")), 0);
+    	Bike bike3 = new Bike(3L, "Model C", 150.0, "Used", true, new ArrayList<>(List.of("ena eli behc yrentini ")), 0);
+    	Bike bike4 = new Bike(4L, "Model D", 150.0, "Used", true, new ArrayList<>(List.of("ena num 4")), 0);
 
 
         bikes.put(1L, bike1);
         bikes.put(2L, bike2);
+        bikes.put(3L, bike3);
+
+        bikes.put(4L, bike4);
+
         
     }
 
@@ -42,7 +49,17 @@ public class BikeRepo {
     }
     
     
+    
+    // Nouvelle méthode pour récupérer un vélo loué par un utilisateur
+    public static Bike getRentedBikeByUser(Long userId) {
+        return bikes.values().stream()
+                .filter(bike -> bike.getRentedBy() != null && bike.getRentedBy().getId().equals(userId))
+                .findFirst()
+                .orElse(null); // Retourne null si aucun vélo n'est trouvé
+    }
 
+    
+    
     public static boolean louer(Long bikeId,GustaveUser rentedby ) {
         Bike bike = bikes.get(bikeId);
         if (bike != null && bike.isAvailable()) {

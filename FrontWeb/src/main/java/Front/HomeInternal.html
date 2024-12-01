@@ -16,6 +16,10 @@
             background-repeat: no-repeat;
             background-size: cover;
         }
+        .rented-bike {
+    background-color: #FBC02D; /* Jaune plus foncé et plus subtil */
+}
+        
         .header {
             position: relative;
             display: flex;
@@ -140,6 +144,7 @@
     </div>
     
 <button id="logoutBtn" class="action-btn logout-btn" onclick="logout()">Deconnect</button>
+    <!-- Message will be displayed here -->
 
     <!-- Bike Section -->
     <div class="bikeSection">
@@ -218,6 +223,11 @@
                 Object.values(bikes).forEach(bike => {
                     const row = document.createElement("tr");
 
+                    // If the bike is rented, add the 'rented-bike' class
+                    if (!bike.available) {
+                        row.classList.add("rented-bike"); // Add the yellow background class
+                    }
+
                     // ID column
                     const idCell = document.createElement("td");
                     idCell.textContent = bike.id;
@@ -238,21 +248,17 @@
                     dateCell.textContent = bike.dateAdded || "N/A";
                     row.appendChild(dateCell);
 
-                 // Notes column
+                    // Notes column
                     const notesCell = document.createElement("td");
-                    // Vérifie si les notes existent et si c'est un tableau
                     if (bike.notes && Array.isArray(bike.notes)) {
-                        // Sélectionner les 5 dernières notes
                         const lastFiveNotes = bike.notes.slice(-5);
-
-                        // On va créer un élément pour chaque note et les afficher une par une dans la cellule
-                        lastFiveNotes.forEach((note, index) => {
+                        lastFiveNotes.forEach((note) => {
                             const noteLine = document.createElement("div");
-                            noteLine.textContent = `- ${note}`; // Affiche la note avec son numéro
-                            notesCell.appendChild(noteLine); // Ajoute chaque note sous forme de ligne dans la cellule
+                            noteLine.textContent = `- ${note}`;
+                            notesCell.appendChild(noteLine);
                         });
                     } else {
-                        notesCell.textContent = "No notes"; // Si aucune note n'est disponible
+                        notesCell.textContent = "No notes";
                     }
                     row.appendChild(notesCell);
 
@@ -260,7 +266,7 @@
                     const statusCell = document.createElement("td");
                     const statusIndicator = document.createElement("span");
                     let statusText = "";
-                    
+
                     if (bike.available) {
                         statusIndicator.classList.add("status", "available");
                         statusText = " Free ";
@@ -301,7 +307,6 @@
             }
         }
 
-     
      
      
      
@@ -460,7 +465,9 @@ async function addToWaitlist(bikeId) {
         }
 
      
-     
+
+
+
 
 
         
