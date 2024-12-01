@@ -13,8 +13,14 @@ import javax.ws.rs.core.Response;
 import Class.ExternalUser;
 import Repositories.ExternalUserRepo;
 
+
+
 @Path("/ExternalUsers")
 public class ExternalUserService {
+	
+	
+	
+	
 	 // Méthode pour enregistrer un utilisateur
     @POST
     @Path("/register")
@@ -45,6 +51,9 @@ public class ExternalUserService {
     
     
     
+    
+    
+    
     @POST
     @Path("/signin")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -58,6 +67,11 @@ public class ExternalUserService {
                     .entity(e.getMessage()).build();
         }
     }
+    
+    
+    
+    
+    
 
     @GET
     @Path("/{id}")
@@ -90,5 +104,15 @@ public class ExternalUserService {
     public Response getAllUsers() {
         return Response.ok(ExternalUserRepo.getAll()).build();
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 }

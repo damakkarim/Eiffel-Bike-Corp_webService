@@ -95,26 +95,24 @@
             padding: 10px 80px;
         }
 
-        #debugInfo {
+        #error-message {
             margin-top: 20px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            word-wrap: break-word;
+            color: red;
+            font-size: 14px;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="signupSection">
         <div class="info">
-            <h2>Weclome to Eiffel Bike Corp</h2>
+            <h2>Welcome to Eiffel Bike Corp</h2>
             <i class="icon ion-ios-ionic-outline" aria-hidden="true"></i>
             
-               <img src="../Utils/UGE_LOGO.png" alt="Logo Gustave Eiffel" style="width: 200px; height: auto; margin-top: 20px;">
+            <img src="../Utils/UGE_LOGO.png" alt="UGE Logo" style="width: 200px; height: auto; margin-top: 20px;">
             
             <p>The Future Is Here</p>
         </div>
-        
         
         <form id="registrationForm" class="signupForm">
             <h2>Sign Up</h2>
@@ -128,15 +126,8 @@
                 <li>
                     <input type="password" class="inputFields" id="password" placeholder="Password" required>
                 </li>
-                <li>
-                    <select id="role" class="inputFields" required>
-                        <option value="" disabled selected>Select Role</option>
-                        <option value="EMPLOYEE">EMPLOYEE</option>
-                        <option value="STUDENT">STUDENT</option>
-                    </select>
-                </li>
                 
-                    <span id="error-message" style="color: red; font-size: 14px; display: none; margin-top: 5px;"></span>
+                <span id="error-message"></span>
                 
                 <li id="center-btn">
                     <input type="submit" id="join-btn" value="Register">
@@ -144,63 +135,56 @@
             </ul>
         </form>
     </div>
-    <div id="debugInfo"></div>
 
     <script>
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        const debugDiv = document.getElementById('debugInfo');
-        const errorMessage = document.getElementById('error-message');
+            // Clear previous error message
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
 
-        // Clear debug information and error message
-        debugDiv.innerHTML = '';
-        errorMessage.style.display = 'none';
-        errorMessage.textContent = '';
+            // Collect form data
+            const userData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            };
 
-        // Collect form data
-        const userData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value,
-            role: document.getElementById('role').value
-        };
-
-        // Debug: Show data being sent
-        debugDiv.innerHTML += `<p>Sending Data: ${JSON.stringify(userData)}</p>`;
-
-        // Fetch request
-        fetch('http://localhost:8080/InternalService/intern/gustaveUsers/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                // Handle specific HTTP status errors
-                if (response.status === 409) {
-                    throw new Error("This mail is used ");
-                } else if (response.status === 400) {
-                    throw new Error("Tous les champs sont obligatoires.");
-                } else {
-                    throw new Error("Une erreur est survenue. Veuillez réessayer.");
+            // Fetch request
+            fetch('http://localhost:8080/ExternalService/ext/ExternalUsers/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle specific HTTP status errors
+                    if (response.status === 409) {
+                        throw new Error("This mail is used ");
+                    } else if (response.status === 400) {
+                        throw new Error("Tous les champs sont obligatoires.");
+                    } else {
+                        throw new Error("Une erreur est survenue. Veuillez réessayer.");
+                    }
                 }
-            }
-            return response.json();
-        })
-        .then(data => {
-            debugDiv.innerHTML += `<p>Response Data: ${JSON.stringify(data)}</p>`;
-            alert("Inscription réussie !");
-        })
-        .catch(error => {
-            // Display error message below the Role field
-            errorMessage.textContent = error.message;
-            errorMessage.style.display = 'block';
+                return response.json();
+            })
+            .then(data => {
+                alert("Inscription réussie !");
+                
+                // Redirect to HomeExternal.jhtml
+                window.location.href = "HomeExternal.html";  // Redirection
+            })
+            .catch(error => {
+                // Display error message below the Role field
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+            });
         });
-    });
-
     </script>
 </body>
 </html>
