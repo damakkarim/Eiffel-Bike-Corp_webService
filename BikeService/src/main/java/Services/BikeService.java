@@ -63,11 +63,19 @@ public class BikeService {
 	    }
 	}
 
+	
+	
+	
+	
+	
+	
+	
     @POST
     @Path("/rent/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response rentBike(@PathParam("id") Long id) {
-        boolean rented = BikeRepo.louer(id);
+    public Response rentBike(@PathParam("id") Long id,GustaveUser user) {
+        boolean rented = BikeRepo.louer(id,user);
         if (rented) {
             return Response.ok("Vélo loué avec succès !").build();
         } else {
@@ -75,7 +83,21 @@ public class BikeService {
                     .entity("Le vélo n'est pas disponible actuellement.").build();
         }
     }
+    
+    
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @POST
     @Path("/return/{id}")
     @Produces(MediaType.APPLICATION_JSON)

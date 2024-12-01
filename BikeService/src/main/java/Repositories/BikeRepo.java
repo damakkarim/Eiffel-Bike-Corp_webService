@@ -1,6 +1,8 @@
 package Repositories;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import Class.Bike;
@@ -10,8 +12,11 @@ public class BikeRepo {
 	private static Map<Long, Bike> bikes = new HashMap<>();
 
     static {
-        Bike bike1 = new Bike(1L, "Model A", 200.0, "poor", true, null, 5, "First bike");
-        Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", false, null, 0, "Second bike");
+    	// Creating a bike with a list of notes
+    	Bike bike1 = new Bike(1L, "Model A", 200.0, "poor", true, new ArrayList<>(List.of("-First bike", "-Needs repair", "-Popular model")), 5);
+    	Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", false, new ArrayList<>(List.of("-Second bike", "-Recently serviced", "-Good condition")), 0);
+
+
         bikes.put(1L, bike1);
         bikes.put(2L, bike2);
         
@@ -38,42 +43,66 @@ public class BikeRepo {
     
     
 
-    public static boolean louer(Long bikeId) {
+    public static boolean louer(Long bikeId,GustaveUser rentedby ) {
         Bike bike = bikes.get(bikeId);
         if (bike != null && bike.isAvailable()) {
             bike.setAvailable(false);
             bike.setRentalCounter(bike.getRentalCounter() + 1);
+            bike.setRentedBy(rentedby);
             return true;
         }
         return false;
     }
 
-    
     public static void retourner(Long bikeId, String notes) {
         Bike bike = bikes.get(bikeId);
-        if (bike != null && bike.isAvailable()==false ) {
-            bike.setAvailable(true);
-            if (notes != null) {
-                bike.setNotes(notes);
+
+        if (bike != null && !bike.isAvailable()) { // Vérifie si le vélo est non disponible
+            bike.setAvailable(true); // Marque le vélo comme disponible
+
+            if (notes != null && !notes.isEmpty()) { // Vérifie si des notes sont fournies
+                // Si le vélo a déjà des notes, on ajoute la nouvelle note à la liste
+                if (bike.getNotes() != null) {
+                    bike.getNotes().add(notes); // Ajoute la nouvelle note à la liste existante
+                } else {
+                    List<String> newNotes = new ArrayList<>();
+                    newNotes.add(notes); // Crée une nouvelle liste de notes si aucune n'existait
+                    bike.setNotes(newNotes); // Associe la nouvelle liste de notes au vélo
+                }
             }
         }
     }
 
+
+
     public static String ajouterALaListeDAttente(Long bikeId, GustaveUser user) {
         Bike bike = bikes.get(bikeId);
         if (bike == null) {
-            return "VELO_INEXISTANT"; // Le vélo n'existe pas.
+            return "VELO_INEXISTANT";
         }
+        
         if (bike.isAvailable()) {
-            return "VELO_DISPONIBLE"; // Le vélo est disponible.
+            return "VELO_DISPONIBLE";
         }
-        if (bike.getWaitingList().contains(user)) {
-            return "UTILISATEUR_DEJA_DANS_LA_LISTE"; // L'utilisateur est déjà dans la liste d'attente.
+        
+        // Initialiser la liste d'attente si elle est null
+        if (bike.getWaitingList() == null) {
+            bike.setWaitingList(new ArrayList<>());
         }
-        bike.getWaitingList().add(user); // Ajoute l'utilisateur à la liste d'attente.
-        return "AJOUT_REUSSI"; // L'ajout a réussi.
+        
+        // Vérification explicite de la présence de l'utilisateur
+        for (GustaveUser existingUser : bike.getWaitingList()) {
+        	System.out.print(existingUser.getId());
+        	System.out.print(user.getId());
+            if (existingUser.getId()==user.getId()) {
+                return "UTILISATEUR_DEJA_DANS_LA_LISTE";
+            }
+        }
+        
+        // Ajouter l'utilisateur à la liste d'attente
+        bike.getWaitingList().add(user);
+        return "AJOUT_REUSSI";
     }
-
 
     public static boolean retirerDeLaListeDAttente(Long bikeId, Long userId) {
         Bike bike = bikes.get(bikeId);
