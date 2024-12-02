@@ -1,18 +1,17 @@
 package Services;
 
 import Class.UserAccount;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import Class.Transaction;
 import Repositories.AccountRepository;
 import Repositories.TransactionRepository;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 
 
 @Path("/Bank")
@@ -21,6 +20,9 @@ public class BankService {
     private AccountRepository accountRepo = new AccountRepository();
     private TransactionRepository transactionRepo = new TransactionRepository();
 
+    
+    
+    
     // Check if the account has enough funds for a given amount
     public boolean checkFunds(Long accountId, double amount) {
         if (accountId == null) {
@@ -34,6 +36,16 @@ public class BankService {
 
         return account.getBalance() >= amount;
     }
+    
+    
+    
+    
+    
+    
+    @POST
+    @Path("/processPayment")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
 
     // Process payment by deducting the amount and creating a transaction
     public boolean processPayment(UserAccount account, double amount) {

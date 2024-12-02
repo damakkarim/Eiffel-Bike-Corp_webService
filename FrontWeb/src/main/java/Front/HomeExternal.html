@@ -125,9 +125,31 @@
             background-color: #fd7e14;
         }
         .action-btn:hover {
+                   
+        
+            opacity: 0.8;
+            
+        }
+        
+        .buy-btn {padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+                   
+        
+            background-color: #28a745;
+            
+        }
+        
+        
+        .buy-btn:hover{
+              
             opacity: 0.8;
         }
-        td, th {
+        
+         
+        .td, th {
             font-weight: 500;
             font-size: 18px;
         }
@@ -148,7 +170,7 @@
 
     <!-- Bike Section -->
     <div class="bikeSection">
-        <h1>Bike Availability</h1>
+        <h1>Bike To Purchase </h1>
         <table>
             <thead>
                 <tr>
@@ -160,7 +182,7 @@
                     <th>Added Date</th>
                                              <th>Notes</th>
                     
-                    <th>Status</th>
+                    <th>Price</th>
                     
                     <th>Actions</th>
                 </tr>
@@ -172,7 +194,115 @@
     </div>
 
     <script>
+   
         
+      
+    
+    
+    
+    const userServiceUrl = "http://localhost:8080/ExternalService/ext/ExternalUsers/FindByEmail";
+
+    let CurrentUser=null;
+    
+    
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+        alert("User not logged in. Redirecting to login page...");
+        window.location.href = 'SignIn.html'; // Redirect to login page
+    }
+
+    // Logout function
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("userEmail");
+        window.location.href = 'HomeInternal.html'; // Redirect to HomeInternal.html
+    });
+
+    // Fetch and display user details by email
+    async function fetchUserDetails(email) {
+        try {
+            const response = await fetch(`${userServiceUrl}/${email}`);
+            if (response.ok) {
+                const user = await response.json();
+                console.log("LaaaaaaA :   "+user.email);
+                CurrentUser=user;
+                displayUserDetails(user);
+            } else {
+                console.error("Failed to fetch user details:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching user details:", error);
+        }
+    }
+
+    // Display user details on the page
+    function displayUserDetails(user) {
+        const userNameElement = document.getElementById("userName");
+        userNameElement.textContent = user.name || "Utilisateur inconnu";
+    }
+    
+    
+    function logout() {
+        // Redirection vers la page signin.html
+        window.location.href = "SignIn.html";
+    }
+    
+    
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        const bikeTableBody = document.getElementById("bikeTableBody");
+
+        // Fetch les vélos filtrés depuis l'API
+        fetch("http://localhost:8080/BikeService/bike/bikes/displayTobuy")
+            .then(response => response.json())
+            .then(bikes => {
+                bikeTableBody.innerHTML = ""; // Vide la table avant d'ajouter les vélos
+                Object.values(bikes).forEach(bike => {
+                    const row = `
+                        <tr>
+                            <td>${bike.id}</td>
+                            <td>${bike.model}</td>
+                            <td>${bike.condition}</td>
+                            <td>${bike.addedDate}</td>
+                            <td>${bike.notes}</td>
+                            <td>${bike.price}</td>
+                            <td>
+                                <button class="buy-btn" onclick='redirectToPurchaseForm(${JSON.stringify(bike)})'>Buy</button>
+                            </td>
+                        </tr>
+                    `;
+                    bikeTableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error("Erreur lors du chargement des vélos :", error));
+    });
+
+    // Redirige vers le formulaire de purchase avec les données de l'utilisateur et du vélo
+    function redirectToPurchaseForm(bike) {
+        if (CurrentUser) {
+            // Enregistrez les données utilisateur et vélo dans le localStorage
+            localStorage.setItem("currentUser", JSON.stringify(CurrentUser));
+            localStorage.setItem("selectedBike", JSON.stringify(bike));
+
+            // Redirigez vers la page Purchaseform.html
+            window.location.href = "PurchaseForm.html";
+        } else {
+            alert("User information not available. Please log in again.");
+            window.location.href = "SignIn.html";
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+
+
+    // Initialize the page
+    fetchUserDetails(userEmail);
+    
     </script>
 </body>
 </html>

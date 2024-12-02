@@ -96,6 +96,10 @@ public class GustaveUserService {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found").build(); // Renvoie un code 404 si l'utilisateur n'existe pas
         }
     }
+    
+    
+    
+    
         @GET
         @Path("/FindByEmail/{email}")
         @Produces(MediaType.APPLICATION_JSON)

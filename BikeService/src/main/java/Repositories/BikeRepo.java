@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
+
 import Class.Bike;
 import Class.GustaveUser;
 
@@ -71,22 +73,33 @@ public class BikeRepo {
         return false;
     }
 
+    
+    
     public static void retourner(Long bikeId, String notes) {
-        Bike bike = bikes.get(bikeId);
 
+    
+    	Bike bike = bikes.get(bikeId);
+    	
+    		
+    		
         if (bike != null && !bike.isAvailable()) { // Vérifie si le vélo est non disponible
-            bike.setAvailable(true); // Marque le vélo comme disponible
-            bike.setRentedBy(null); // Réinitialise le propriétaire
+            bike.setAvailable(true); 
+            bike.setRentedBy(null); 
+            
+            
+     
+             
+            
+            bike.getWaitingList().remove(0);
 
-            if (notes != null && !notes.isEmpty()) { // Vérifie si des notes sont fournies
-                // Si le vélo a déjà des notes, on ajoute la nouvelle note à la liste, sinon on crée une nouvelle liste
+            if (notes != null && !notes.isEmpty()) { 
                 if (bike.getNotes() == null) {
                     bike.setNotes(new ArrayList<>()); // Crée une nouvelle liste de notes si elle est nulle
                 }
                 bike.getNotes().add(notes); // Ajoute la nouvelle note à la liste
             }
-        }
-    }
+        }}
+    
 
     
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Class.ExternalUser;
+import Services.IncorrectPasswordException;
 import Class.ExternalUser;
 
 public class ExternalUserRepo {
@@ -54,16 +55,23 @@ public class ExternalUserRepo {
     
     
 
-    // Se connecter (vérification de l'email et du mot de passe)
-    public static ExternalUser signIn(String email, String password) {
-        for (ExternalUser user : users.values()) {
-            if (user.getEmail().equalsIgnoreCase(email) && user.getPassword().equals(password)) {
-                return user;  // Retourner l'utilisateur si les informations sont correctes
+    
+ // Se connecter (vérification de l'email et du mot de passe)
+    public static ExternalUser signIn(String email, String password) throws IncorrectPasswordException {
+        for (ExternalUser ExternalUser : users.values()) {
+            if (ExternalUser.getEmail().equalsIgnoreCase(email)) {
+                if (ExternalUser.getPassword().equals(password)) {
+                    return ExternalUser;  // Retourner l'utilisateur si les informations sont correctes
+                } else {
+                    throw new IncorrectPasswordException("Incorrect email or password");
+                }
             }
         }
-        return null;  // Retourner null si les informations d'identification sont incorrectes
+        throw new IllegalArgumentException("User Not found.");
     }
 
+    
+    
     public static ExternalUser save(ExternalUser user) {
         if (user.getId() == null) {
             user.setId(++userIdCounter);
@@ -72,6 +80,8 @@ public class ExternalUserRepo {
         return user;
     }
 
+    
+    
     public static ExternalUser getUserById(Long userId) {
     	
     	

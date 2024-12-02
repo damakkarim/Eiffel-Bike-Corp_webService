@@ -14,8 +14,8 @@ public class GustaveUserRepo {
 
     static {
         // Initialisation des utilisateurs
-        GustaveUser user1 = new GustaveUser(1L, "Alice", "alice@university.com", "password123", Role.STUDENT);
-        GustaveUser user2 = new GustaveUser(2L, "Bob", "bob@university.com", "password456", Role.EMPLOYEE);
+        GustaveUser user1 = new GustaveUser(1L, "Karim","dammakkarim@gmail.com", "password123", Role.STUDENT);
+        GustaveUser user2 = new GustaveUser(2L, "Bob", "bob@univ-eiffel.fr", "password456", Role.EMPLOYEE);
         users.put(user1.getId(), user1);
         users.put(user2.getId(), user2);
     }

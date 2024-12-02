@@ -12,8 +12,7 @@ import javax.ws.rs.core.Response;
 
 import Class.ExternalUser;
 import Repositories.ExternalUserRepo;
-
-
+import Services.IncorrectPasswordException;
 
 @Path("/ExternalUsers")
 public class ExternalUserService {
@@ -49,8 +48,7 @@ public class ExternalUserService {
     
     
     
-    
-    
+
     
     
     
@@ -60,16 +58,34 @@ public class ExternalUserService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response signIn(ExternalUser user) {
         try {
+            // Tentative de connexion
             ExternalUser authenticatedUser = ExternalUserRepo.signIn(user.getEmail(), user.getPassword());
+            
+            // Si l'authentification réussit, on renvoie l'utilisateur
             return Response.ok(authenticatedUser).build();
-        } catch (IllegalArgumentException e) {
+        } catch (IncorrectPasswordException e) {
+            // Si le mot de passe est incorrect, on renvoie un message d'erreur spécifique
+            String errorMessage = "{\"error\": \"Incorrect password.\"}";
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(e.getMessage()).build();
+                           .entity(errorMessage)  // Envoi du message d'erreur en JSON
+                           .build();
+        } catch (IllegalArgumentException e) {
+            // Autres erreurs d'argument (par exemple, utilisateur non trouvé)
+            String errorMessage = "{\"error\": \"" + e.getMessage() + "\"}";
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity(errorMessage)  // Envoi du message d'erreur en JSON
+                           .build();
+        } catch (Exception e) {
+            // Gestion des erreurs générales
+            String errorMessage = "{\"error\": \"An internal error occurred.\"}";
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity(errorMessage)  // Envoi du message d'erreur en JSON
+                           .build();
         }
     }
-    
-    
-    
+
+
+
     
     
 
@@ -106,6 +122,25 @@ public class ExternalUserService {
     }
     
     
+    @GET
+    @Path("/FindByEmail/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserByEmail(@PathParam("email") String email) {
+        System.out.println("Email received: " + email); // Ligne de débogage
+        if (email == null || email.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Email is null or empty").build();
+        }
+
+        ExternalUser ExternalUser = ExternalUserRepo.getUserByEmail(email);
+        if (ExternalUser != null) {
+            return Response.ok(ExternalUser).build(); // Renvoie l'utilisateur en JSON
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("User not found").build(); // Renvoie un code 404 si l'utilisateur n'existe pas
+        }
+    
+}
+
+
     
     
     

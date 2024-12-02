@@ -6,6 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -182,6 +183,33 @@ public class BikeService {
     }
 
 
+    
+    
+    
+    @GET
+    @Path("/displayTobuy")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAvailableAndRentedBikes() {
+        // Récupère tous les vélos
+        Map<Long, Bike> allBikes = BikeRepo.afficherTous();
+        
+        // Filtre les vélos qui respectent les critères (RentalCounter > 1 et disponibles)
+        Map<Long, Bike> filteredBikes = allBikes.entrySet().stream()
+            .filter(entry -> entry.getValue().getRentalCounter() > 1 && entry.getValue().isAvailable())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        
+        // Retourne les vélos filtrés
+        return Response.ok(filteredBikes).build();
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     // Méthode pour convertir une chaîne JSON en objet GustaveUser (exemple utilisant Jackson)

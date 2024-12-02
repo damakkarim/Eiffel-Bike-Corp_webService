@@ -146,51 +146,63 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
 
-            // Récupérer les champs du formulaire
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // Récupérer les champs du formulaire
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-            // Construire l'objet utilisateur
-            const userData = {
-                email: email,
-                password: password
-            };
+        // Construire l'objet utilisateur
+        const userData = {
+            email: email,
+            password: password
+        };
 
-            const errorMessageDiv = document.getElementById('errorMessage'); // Pour afficher les erreurs
-            errorMessageDiv.innerHTML = ''; // Réinitialiser les messages d'erreur
+        const errorMessageDiv = document.getElementById('errorMessage'); // Pour afficher les erreurs
+        errorMessageDiv.innerHTML = ''; // Réinitialiser les messages d'erreur
 
-            // Envoyer une requête POST
-            fetch('http://localhost:8080/InternalService/intern/gustaveUsers/signin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
+        // Vérifier si l'email est interne ou externe
+        const isInternal = email.endsWith('@gmail.com');
+
+        const url = isInternal
+            ? 'http://localhost:8080/InternalService/intern/gustaveUsers/signin'
+            : 'http://localhost:8080/ExternalService/ext/ExternalUsers/signin';
+
+        // Effectuer la requête POST
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Incorrect email or password');
+                    });
+                }
+                return response.json();
             })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.error || 'Incorrect email or password');
-                        });
-                    }
-                    return response.json();
-                })
-            .then(data => {
-    // Stocker l'email dans localStorage
-    localStorage.setItem('userEmail', email);
+            .then(() => {
+                // Stocker l'email dans localStorage
+                localStorage.setItem('userEmail', email);
 
-    // Redirection vers la page d'accueil
-    window.location.href = 'HomeInternal.html';
-})
+                // Rediriger en fonction du type d'utilisateur
+                if (isInternal) {
+                    window.location.href = 'HomeInternal.html';
+                } else {
+                    window.location.href = 'HomeExternal.html';
+                }
+            })
+            .catch(error => {
+                // Afficher le message d'erreur
+                errorMessageDiv.innerHTML = `<p>${error.message}</p>`;
+            });
+    });
 
-                .catch(error => {
-                    console.error('Error:', error);
-                    errorMessageDiv.innerHTML = `<p>${error.message}</p>`; // Affiche l'erreur
-                });
-        });
+
     </script>
 </body>
 </html>
