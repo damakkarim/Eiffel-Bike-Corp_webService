@@ -16,6 +16,15 @@ public class ExternalUser implements Serializable  {
     private String name;
     private String email;
     private String password;
+    private UserAccount userAccount; // Liaison avec UserAccount
+
+    
+	public UserAccount getUserAccount() {
+		return userAccount;
+	}
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -45,12 +54,13 @@ public class ExternalUser implements Serializable  {
 		return "ExternalUser [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + "]";
 	}
 	
-	public ExternalUser(Long id, String name, String email, String password) {
+	public ExternalUser(Long id, String name, String email, String password,UserAccount userAccount ) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
+		this.userAccount=userAccount;
 	}
 	public ExternalUser() {
 		super();

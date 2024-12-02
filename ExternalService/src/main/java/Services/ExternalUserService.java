@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import Class.ExternalUser;
+import Class.UserAccount;
 import Repositories.ExternalUserRepo;
 import Services.IncorrectPasswordException;
 
@@ -20,30 +21,52 @@ public class ExternalUserService {
 	
 	
 	
-	 // Méthode pour enregistrer un utilisateur
-    @POST
-    @Path("/register")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(ExternalUser user) {
-        // Vérification des champs obligatoires
-        if (user.getEmail() == null || user.getPassword() == null || user.getName() == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("Tous les champs (nom, email, mot de passe) sont obligatoires.")
-                           .build();
-        }
+	@POST
+	@Path("/register")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response registerUser(ExternalUser user) {
+	    // Check required fields for ExternalUser
+	    if (user.getEmail() == null || user.getPassword() == null || user.getName() == null) {
+	        return Response.status(Response.Status.BAD_REQUEST)
+	                       .entity("All fields (name, email, password) are required.")
+	                       .build();
+	    }
 
-        // Vérifier si l'email est déjà pris
-        if (ExternalUserRepo.getUserByEmail(user.getEmail()) != null) {
-            return Response.status(Response.Status.CONFLICT)
-                           .entity("Cet email est déjà utilisé.")
-                           .build();
-        }
+	    // Check required fields for UserAccount
+	    UserAccount account = user.getUserAccount();
+	    if (account == null || account.getUserName() == null || account.getCardnumber() == 0 ||
+	        account.getExpirationDate() == null || account.getCvv() == null) {
+	        return Response.status(Response.Status.BAD_REQUEST)
+	                       .entity("User account information (username, card number, expiration date, CVV) is required.")
+	                       .build();
+	    }
 
-        // Enregistrer l'utilisateur
-        ExternalUser registeredUser = ExternalUserRepo.register(user);
-        return Response.ok(registeredUser).build();
-    }
+	    // Check if the email is already in use
+	    if (ExternalUserRepo.getUserByEmail(user.getEmail()) != null) {
+	        return Response.status(Response.Status.CONFLICT)
+	                       .entity("This email is already in use.")
+	                       .build();
+	    }
+
+	    // Map additional account details
+	    UserAccount newAccount = new UserAccount();
+	    newAccount.setUserName(account.getUserName());
+	    newAccount.setBalance(account.getBalance());
+	    newAccount.setCardnumber(account.getCardnumber());
+	    newAccount.setExpirationDate(account.getExpirationDate());
+	    newAccount.setCvv(account.getCvv());
+
+	    // Link the UserAccount object to ExternalUser
+	    user.setUserAccount(newAccount);
+
+	    // Register the user
+	    ExternalUser registeredUser = ExternalUserRepo.register(user);
+
+	    // Return the registered user information
+	    return Response.ok(registeredUser).build();
+	}
+
 
     
     
@@ -61,6 +84,8 @@ public class ExternalUserService {
             // Tentative de connexion
             ExternalUser authenticatedUser = ExternalUserRepo.signIn(user.getEmail(), user.getPassword());
             
+            
+            System.out.print(user);
             // Si l'authentification réussit, on renvoie l'utilisateur
             return Response.ok(authenticatedUser).build();
         } catch (IncorrectPasswordException e) {
