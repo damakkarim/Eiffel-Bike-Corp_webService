@@ -17,11 +17,12 @@ public class ExternalUserRepo {
     
     static {
     	// Initialisation des utilisateurs avec UserAccount
-    	UserAccount account1 = new UserAccount(1L, "siwar_account", 1000.0, 1234567890123456L, LocalDate.of(2025, 12, 31), 123L);
+    	UserAccount account1 = new UserAccount(1L, "siwar_account", 1000.0, "1234567890123456", LocalDate.of(2025, 12, 31), 123L);
     	ExternalUser user1 = new ExternalUser(1L, "siwar", "siwar@university.com", "password123", account1);
 
-    	UserAccount account2 = new UserAccount(2L, "ahmed_account", 2000.0, 9876543210987654L, LocalDate.of(2026, 6, 30), 456L);
+    	UserAccount account2 = new UserAccount(2L, "ahmed_account", 2000.0, "9876543210987654", LocalDate.of(2026, 6, 30), 456L);
     	ExternalUser user2 = new ExternalUser(2L, "ahmed", "ahmed@university.com", "password456", account2);
+
 
     	// Stockage des utilisateurs dans la collection
     	users.put(user1.getId(), user1);
@@ -48,18 +49,19 @@ public class ExternalUserRepo {
     
     
 
- // Enregistrer un nouvel utilisateur
+
+
     public static ExternalUser register(ExternalUser uu) {
-    	System.out.print("sas \n "+uu);
+        // Afficher les données de l'utilisateur pour le débogage
+        System.out.println("Received registration request: " + uu);
+
         // Vérifier si l'email est déjà pris
         for (ExternalUser user : users.values()) {
             if (user.getEmail().equals(uu.getEmail())) {
-                System.out.println("Email already registered.");
-                return user; // Retourner l'utilisateur existant si l'email est déjà enregistré
+                System.out.println("Email already registered: " + uu.getEmail());
+                return null; // Retourner null si l'email est déjà pris, gérer cela côté appelant
             }
         }
-        
-        
 
         // Vérification de l'objet UserAccount
         if (uu.getUserAccount() == null) {
@@ -67,23 +69,31 @@ public class ExternalUserRepo {
             return null; // Retourner null si l'objet UserAccount est manquant
         }
 
+        // Vérification des champs requis pour UserAccount
+        if (uu.getUserAccount().getUserName() == null || uu.getUserAccount().getCardnumber() == null ||
+            uu.getUserAccount().getExpirationDate() == null || uu.getUserAccount().getCvv() == null) {
+            System.out.println("Incomplete user account details.");
+            return null; // Retourner null si les informations du compte sont incomplètes
+        }
+
         // Créer un nouvel utilisateur avec un ID unique
         ExternalUser newUser = new ExternalUser(
-            userIdCounter++,
+            userIdCounter++, // Générer un ID unique
             uu.getName(),
             uu.getEmail(),
             uu.getPassword(),
-            uu.getUserAccount() // Associer le UserAccount existant
+            uu.getUserAccount() // Associer l'objet UserAccount à l'utilisateur
         );
 
         // Ajouter l'utilisateur à la base de données
         users.put(newUser.getId(), newUser);
 
+        // Log et retour du nouvel utilisateur inscrit
         System.out.println("User registered successfully: " + newUser.getEmail());
+
         return newUser;
     }
 
-    
 
     
  // Se connecter (vérification de l'email et du mot de passe)

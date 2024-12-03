@@ -35,7 +35,7 @@ public class ExternalUserService {
 
 	    // Check required fields for UserAccount
 	    UserAccount account = user.getUserAccount();
-	    if (account == null || account.getUserName() == null || account.getCardnumber() == 0 ||
+	    if (account == null || account.getUserName() == null || account.getCardnumber() == null ||
 	        account.getExpirationDate() == null || account.getCvv() == null) {
 	        return Response.status(Response.Status.BAD_REQUEST)
 	                       .entity("User account information (username, card number, expiration date, CVV) is required.")
@@ -53,7 +53,7 @@ public class ExternalUserService {
 	    UserAccount newAccount = new UserAccount();
 	    newAccount.setUserName(account.getUserName());
 	    newAccount.setBalance(account.getBalance());
-	    newAccount.setCardnumber(account.getCardnumber());
+	    newAccount.setCardnumber(account.getCardnumber());  // Cardnumber is now a String
 	    newAccount.setExpirationDate(account.getExpirationDate());
 	    newAccount.setCvv(account.getCvv());
 
@@ -67,8 +67,6 @@ public class ExternalUserService {
 	    return Response.ok(registeredUser).build();
 	}
 
-
-    
     
     
 

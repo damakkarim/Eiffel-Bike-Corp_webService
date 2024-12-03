@@ -10,7 +10,7 @@ public class UserAccount implements Serializable{
     private String userName;
     private double balance;
    
-    private double  cardnumber;
+    private String  cardnumber;
     private LocalDate ExpirationDate;
     private Long cvv;
     
@@ -24,7 +24,7 @@ public class UserAccount implements Serializable{
 
 
 
-	public UserAccount(Long id, String userName, double balance, double cardnumber, LocalDate expirationDate, Long cvv) {
+	public UserAccount(Long id, String userName, double balance, String cardnumber, LocalDate expirationDate, Long cvv) {
 		super();
 		this.id = id;
 		this.userName = userName;
@@ -37,10 +37,10 @@ public class UserAccount implements Serializable{
 	
 	
 	
-	public double getCardnumber() {
+	public String getCardnumber() {
 		return cardnumber;
 	}
-	public void setCardnumber(double cardnumber) {
+	public void setCardnumber(String cardnumber) {
 		this.cardnumber = cardnumber;
 	}
 	public LocalDate getExpirationDate() {
