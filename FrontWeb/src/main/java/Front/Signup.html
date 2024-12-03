@@ -17,9 +17,36 @@
             background-color: #111;
             color: white;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: flex-end;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: rgba(20, 20, 20, .8);
+        }
+
+        #signin-btn {
+            border: 1px solid rgba(10, 180, 180, 1);
+            background: rgba(10, 180, 180, .8);
+            font-size: 16px;
+            color: white;
+            padding: 10px 30px;
+            cursor: pointer;
+            transition: .4s;
+            border-radius: 5px;
+        }
+
+        #signin-btn:hover {
+            background: rgba(10, 180, 180, 1);
         }
 
         .signup-section {
@@ -28,6 +55,7 @@
             background: rgba(20, 20, 20, .8);
             box-shadow: 3px 10px 20px 5px rgba(0, 0, 0, .5);
             border-radius: 8px;
+            margin-top: 50px; /* Space from header */
         }
 
         .info {
@@ -91,14 +119,22 @@
         .success-message {
             color: green;
         }
+        
     </style>
 </head>
 <body>
+
+    <!-- Header with Sign In button -->
+    <header>
+        <button id="signin-btn" onclick="window.location.href='SignIn.html'">Sign In</button>
+    </header>
+
     <div class="signup-section">
         <div class="info">
             <h2>Welcome to Our Service</h2>
             <p>Join us and enjoy a seamless experience.</p>
         </div>
+
         <div class="signup-form">
             <form id="registration-form">
                 <label for="name">Full Name:</label>
@@ -118,7 +154,6 @@
 
                 <label for="expirationDate">Expiration Date (YYYY-MM-DD):</label>
 				<input type="date" id="expirationDate" class="input-fields" name="expirationDate" required>
-
 
                 <label for="cvv">CVV:</label>
                 <input type="text" id="cvv" class="input-fields" name="cvv" required>
@@ -203,28 +238,28 @@
         })
         .then(response => {
             if (response.ok) {
-                return response.json().catch(() => null); // Handle empty or invalid JSON
-            } else if (response.status === 409) {
-                document.getElementById('error-message').style.display = 'block';
-                document.getElementById('error-message').textContent = 'Email already registered!';
-                return null; // Avoid further processing
+                return response.json().catch(() => null); // Attempt to parse JSON response
             } else {
-                throw new Error('Something went wrong!');
+                throw new Error('Server error');
             }
         })
         .then(data => {
             if (data) {
+                // Clear the form and show success message
+                document.getElementById('registration-form').reset();
                 document.getElementById('success-message').style.display = 'block';
                 document.getElementById('success-message').textContent = 'Registration successful!';
+                setTimeout(function() {
+                    document.getElementById('success-message').style.display = 'none';
+                }, 3000); // Hide message after 3 seconds
             }
         })
         .catch(error => {
             document.getElementById('error-message').style.display = 'block';
-            document.getElementById('error-message').textContent = 'Error: ' + error.message;
+            document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
         });
     });
-
-
     </script>
+
 </body>
 </html>
