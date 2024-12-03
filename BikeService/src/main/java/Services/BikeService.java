@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -103,10 +104,11 @@ public class BikeService {
     @Path("/return/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response returnBike(@PathParam("id") Long id, String notes) {
+    public Response returnBike(@PathParam("id") Long id, List  <String> notes) {
         // Retourner le vélo et ajouter la note
         BikeRepo.retourner(id, notes);
         return Response.ok("Vélo retourné avec succès et note ajoutée !").build();
+        
     }
 
     

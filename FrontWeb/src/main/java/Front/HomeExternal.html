@@ -276,20 +276,20 @@
             .catch(error => console.error("Erreur lors du chargement des vélos :", error));
     });
 
-    // Redirige vers le formulaire de purchase avec les données de l'utilisateur et du vélo
     function redirectToPurchaseForm(bike) {
         if (CurrentUser) {
             // Enregistrez les données utilisateur et vélo dans le localStorage
             localStorage.setItem("currentUser", JSON.stringify(CurrentUser));
             localStorage.setItem("selectedBike", JSON.stringify(bike));
 
-            // Redirigez vers la page Purchaseform.html
+            // Redirigez vers la page PurchaseForm.html
             window.location.href = "PurchaseForm.html";
         } else {
             alert("User information not available. Please log in again.");
             window.location.href = "SignIn.html";
         }
     }
+
 
     
     

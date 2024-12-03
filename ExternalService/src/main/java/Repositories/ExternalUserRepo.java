@@ -1,8 +1,11 @@
 package Repositories;
 
+import java.net.HttpURLConnection;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.codehaus.jackson.map.ObjectMapper;
 
 import Class.ExternalUser;
 import Class.UserAccount;
@@ -75,18 +78,28 @@ public class ExternalUserRepo {
             System.out.println("Incomplete user account details.");
             return null; // Retourner null si les informations du compte sont incomplètes
         }
+        
+        
+        userIdCounter++;
+        
+        uu.getUserAccount().setId(userIdCounter); // Utiliser userIdCounter pour définir idAccount
+
+        uu.getUserAccount().setBalance(400); // Utiliser userIdCounter pour définir idAccount
 
         // Créer un nouvel utilisateur avec un ID unique
         ExternalUser newUser = new ExternalUser(
-            userIdCounter++, // Générer un ID unique
+        	userIdCounter, // Générer un ID unique
             uu.getName(),
             uu.getEmail(),
             uu.getPassword(),
             uu.getUserAccount() // Associer l'objet UserAccount à l'utilisateur
         );
 
+        
         // Ajouter l'utilisateur à la base de données
         users.put(newUser.getId(), newUser);
+        
+        
 
         // Log et retour du nouvel utilisateur inscrit
         System.out.println("User registered successfully: " + newUser.getEmail());
@@ -130,7 +143,8 @@ public class ExternalUserRepo {
 
        
     }
+   
     
-
     
+   
 }

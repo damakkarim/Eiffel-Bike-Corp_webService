@@ -1,262 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
-    
-    
-    
-    
-    <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bike Purchase </title>
-    
-    
+    <title>Purchase Form</title>
     <style>
-  body {
-  font-family: "Roboto", sans-serif !important;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.mainscreen {
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: #dfdbe5;
-  background-image: url("https://wallpaperaccess.com/full/3063067.png");
-  color: #963e7b;
-}
-
-.card {
-  width: 60rem;
-  margin: auto;
-  background: white;
-  position: center;
-  align-self: center;
-  top: 50rem;
-  border-radius: 1.5rem;
-  box-shadow: 4px 3px 20px #3535358c;
-  display: flex;
-  flex-direction: row;
-}
-
-.leftside {
-  background: #030303;
-  width: 25rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top-left-radius: 1.5rem;
-  border-bottom-left-radius: 1.5rem;
-}
-
-.product {
-  object-fit: cover;
-  width: 40;
-  height: 50;
-  
-}
-
-.rightside {
-  background-color: #ffffff;
-  width: 35rem;
-  border-bottom-right-radius: 1.5rem;
-  border-top-right-radius: 1.5rem;
-  padding: 1rem 2rem 3rem 3rem;
-}
-
-p {
-  display: block;
-  font-size: 1.1rem;
-  font-weight: 400;
-  margin: 0.8rem 0;
-}
-
-.inputbox {
-  color: #030303;
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-bottom: 1.5px solid #ccc;
-  margin-bottom: 1rem;
-  border-radius: 0.3rem;
-  font-family: "Roboto", sans-serif;
-  color: #615a5a;
-  font-size: 1.1rem;
-  font-weight: 500;
-  outline: none;
-}
-
-.expcvv {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 0.6rem;
-}
-
-.expcvv_text {
-  padding-right: 1rem;
-}
-.expcvv_text2 {
-  padding: 0 1rem;
-}
-
-.button {
-  background: linear-gradient(135deg, #753370 0%, #298096 100%);
-  padding: 15px;
-  border: none;
-  border-radius: 50px;
-  color: white;
-  font-weight: 400;
-  font-size: 1.2rem;
-  margin-top: 10px;
-  width: 100%;
-  letter-spacing: 0.11rem;
-  outline: none;
-}
-
-.button:hover {
-  transform: scale(1.05) translateY(-3px);
-  box-shadow: 3px 3px 6px #38373785;
-}
-
-@media only screen and (max-width: 1000px) {
-  .card {
-    flex-direction: column;
-    width: auto;
-  }
-
-  .leftside {
-    width: 100%;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top-right-radius: 0;
-    border-radius: 0;
-  }
-
-  .rightside {
-    width: auto;
-    border-bottom-left-radius: 1.5rem;
-    padding: 0.5rem 3rem 3rem 2rem;
-    border-radius: 0;
-  }
-}
-  
+        /* Styles de base */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            text-align: center;
+        }
+        .info-section {
+            margin-bottom: 20px;
+        }
+        .info-section span {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
-
-
 <body>
-    
-    
-    <div class="mainscreen">
-    <!-- <img src="https://image.freepik.com/free-vector/purple-background-with-neon-frame_52683-34124.jpg"  class="bgimg " alt="">--> 
-      <div class="card">
-        <div class="leftside">
-          <img
-            src="../Utils/FormPage.png"
-            class="product"
-            alt="Shoes"
-          />
+    <div class="container">
+        <h1>Purchase Bike</h1>
+        <div class="info-section">
+            <h2>Bike Details</h2>
+            <span id="bikeModel"></span>
+            <span id="bikePrice"></span>
+            <span id="bikeCondition"></span>
         </div>
-        <div class="rightside">
-          <form action="">
-            <h1>CheckOut</h1>
-            <h2>Payment Information</h2>
-            <p>Cardholder Name</p>
-            <input type="text" class="inputbox" name="name" required />
-            <p>Card Number</p>
-            <input type="number" class="inputbox" name="card_number" id="card_number" required />
 
-            
-            
-<div class="expcvv">
-
-        
-
-            <p class="expcvv_text2">CVV</p>
-            <input type="password" class="inputbox" name="cvv" id="cvv" required />
+        <div class="info-section">
+            <h2>User Details</h2>
+            <span id="userName"></span>
+            <span id="userEmail"></span>
         </div>
-            <p></p>
-            <button type="submit" class="button">Purchase</button>
-          </form>
+
+        <div class="input-group">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" placeholder="Enter your card number" required>
         </div>
-      </div>
+        <div class="input-group">
+            <label for="expiryDate">Expiry Date (YYYY-MM-DD)</label>
+            <input type="text" id="expiryDate" placeholder="YYYY-MM-DD" required>
+        </div>
+        <div class="input-group">
+            <label for="cvv">CVV</label>
+            <input type="number" id="cvv" placeholder="Enter CVV" required>
+        </div>
+
+        <button class="btn" id="purchaseBtn">Submit</button>
+
+        <div class="error-message" id="errorMessage"></div>
     </div>
-  
-
-
-
 
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Récupérez les données utilisateur et vélo
-        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        const selectedBike = JSON.parse(localStorage.getItem("selectedBike"));
+        // Récupération des données depuis le localStorage
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const bike = JSON.parse(localStorage.getItem("selectedBike"));
 
-        if (currentUser && selectedBike) {
-            console.log("Current User  :", currentUser);
-            console.log("Selected Bike : ", selectedBike);
+        // Mise à jour des détails affichés
+        document.getElementById("userName").textContent = `Name: ${user?.name || "Unknown"}`;
+        document.getElementById("userEmail").textContent = `Email: ${user?.email || "Unknown"}`;
+        document.getElementById("bikeModel").textContent = `Model: ${bike?.model || "Unknown"}`;
+        document.getElementById("bikePrice").textContent = `Price: ${bike?.price || "Unknown"} USD`;
+        document.getElementById("bikeCondition").textContent = `Condition: ${bike?.condition || "Unknown"}`;
 
-            // Remplissez les champs ou affichez les informations dans le formulaire
-            document.getElementById("userName").textContent = currentUser.name;
-            document.getElementById("bikeModel").textContent = selectedBike.model;
-        } else {
-            alert("Missing information. Redirecting to main page...");
-            window.location.href = "HomeInternal.html"; // Redirige si les données manquent
-        }
-    });
+        // Validation des informations de carte bancaire
+        document.getElementById("purchaseBtn").addEventListener("click", () => {
+            const cardNumber = document.getElementById("cardNumber").value;
+            const expiryDate = document.getElementById("expiryDate").value;
+            const cvv = document.getElementById("cvv").value;
+            const errorMessageElement = document.getElementById("errorMessage");
 
-    
+            // Réinitialisation des erreurs
+            errorMessageElement.textContent = "";
+
+            // Vérifications
+            if (!cardNumber || !expiryDate || !cvv) {
+                errorMessageElement.textContent = "All fields are required.";
+                return;
+            }
+
+            const userAccount = user?.userAccount;
+
+            if (!userAccount) {
+                errorMessageElement.textContent = "User account details not found.";
+                return;
+            }
+
+            if (
+                cardNumber !== userAccount.cardnumber ||
+                expiryDate !== userAccount.expirationDate ||
+                parseInt(cvv) !== userAccount.cvv
+            ) {
+                errorMessageElement.textContent = "Card details do not match.";
+                return;
+            }
+
+            // Préparation des données pour l'API
+            const paymentRequest = {
+                accountId: userAccount.id,
+                amount: parseFloat(bike.price),
+            };
+
+            try {
+                // Appel API pour traiter le paiement
+                const response = await fetch("http://localhost:8080/BanqueService/bank/Bank/processPayment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(paymentRequest),
+                });
+
+                // Gestion de la réponse de l'API
+                if (response.ok) {
+                    const transaction = await response.json();
+                    alert(`Purchase successful! Transaction ID: ${transaction.id}`);
+                    window.location.href = "HomeExternal.html";
+                } else {
+                    const error = await response.text();
+                    errorMessageElement.textContent = error;
+                }
+            } catch (error) {
+                console.error("Error during API call:", error);
+                errorMessageElement.textContent = "An error occurred during payment processing.";
+            }
+        });
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-    
-    
-    
-    

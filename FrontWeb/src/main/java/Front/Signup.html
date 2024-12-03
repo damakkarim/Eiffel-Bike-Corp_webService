@@ -228,7 +228,6 @@
             }
         };
 
-        // Send the request to the server
         fetch('http://localhost:8080/ExternalService/ext/ExternalUsers/register', {
             method: 'POST',
             headers: {
@@ -238,26 +237,30 @@
         })
         .then(response => {
             if (response.ok) {
-                return response.json().catch(() => null); // Attempt to parse JSON response
+                return response.json(); // Parse JSON if the response is successful
+            } else if (response.status === 409) {
+                // If the email is already in use
+                throw new Error('This email is already in use.');
             } else {
-                throw new Error('Server error');
+                // Handle other errors
+                throw new Error('An error occurred. Please try again.');
             }
         })
         .then(data => {
-            if (data) {
-                // Clear the form and show success message
-                document.getElementById('registration-form').reset();
-                document.getElementById('success-message').style.display = 'block';
-                document.getElementById('success-message').textContent = 'Registration successful!';
-                setTimeout(function() {
-                    document.getElementById('success-message').style.display = 'none';
-                }, 3000); // Hide message after 3 seconds
-            }
+            // Clear the form and show success message
+            document.getElementById('registration-form').reset();
+            document.getElementById('success-message').style.display = 'block';
+            document.getElementById('success-message').textContent = 'Registration successful!';
+            setTimeout(function() {
+                document.getElementById('success-message').style.display = 'none';
+            }, 3000); // Hide message after 3 seconds
         })
         .catch(error => {
+            // Display specific error message
             document.getElementById('error-message').style.display = 'block';
-            document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
+            document.getElementById('error-message').textContent = error.message; // Display the error message from the backend or general error
         });
+
     });
     </script>
 
