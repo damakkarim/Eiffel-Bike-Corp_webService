@@ -17,8 +17,8 @@ public class BikeRepo {
 
     static {
     	// Creating a bike with a list of notes
-    	Bike bike1 = new Bike(1L, "Model A", 200.0, "poor", true, new ArrayList<>(List.of("-First bike", "-Needs repair", "-Popular model")), 5);
-    	Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", true, new ArrayList<>(List.of("-Second bike", "-Recently serviced", "-Good condition")), 0);
+    	Bike bike1 = new Bike(1L, "Model A", 20.0, "poor", true, new ArrayList<>(List.of("-First bike", "-Needs repair", "-Popular model")), 5);
+    	Bike bike2 = new Bike(2L, "Model B", 150.0, "Used", true, new ArrayList<>(List.of("-Second bike", "-Recently serviced", "-Good condition")), 4);
     	Bike bike3 = new Bike(3L, "Model C", 150.0, "Used", true, new ArrayList<>(List.of("ena eli behc yrentini ")), 0);
     	Bike bike4 = new Bike(4L, "Model D", 150.0, "Used", true, new ArrayList<>(List.of("ena num 4")), 0);
 

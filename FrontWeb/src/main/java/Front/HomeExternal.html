@@ -156,6 +156,17 @@
         .action-btn:focus {
             outline: none;
         }
+        
+    .user-balance {
+        position: absolute;
+        top: 10px;
+        right: 120px; /* Position à droite mais à gauche du bouton de déconnexion */
+        font-size: 16px;
+        color: #FBC02D; /* Jaune pour mettre en évidence */
+        font-weight: bold;
+    }
+</style>
+        
     </style>
 </head>
 <body>
@@ -163,6 +174,8 @@
     <div class="header">
         <img src="../Utils/UGE_LOGO_white.png" alt="Logo Gustave Eiffel" class="logo">
         <span>Welcome <span id="userName">Nom Prénom</span>!</span>
+            <span id="userBalance" class="user-balance"></span>
+        
     </div>
     
 <button id="logoutBtn" class="action-btn logout-btn" onclick="logout()">Deconnect</button>
@@ -245,7 +258,8 @@
         // Redirection vers la page signin.html
         window.location.href = "SignIn.html";
     }
-    
+    const userBalanceElement = document.getElementById("userBalance");
+
     
     
     document.addEventListener("DOMContentLoaded", () => {

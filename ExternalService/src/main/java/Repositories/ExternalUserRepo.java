@@ -79,12 +79,8 @@ public class ExternalUserRepo {
             return null; // Retourner null si les informations du compte sont incomplètes
         }
         
-        
-        userIdCounter++;
-        
-        uu.getUserAccount().setId(userIdCounter); // Utiliser userIdCounter pour définir idAccount
 
-        uu.getUserAccount().setBalance(400); // Utiliser userIdCounter pour définir idAccount
+
 
         // Créer un nouvel utilisateur avec un ID unique
         ExternalUser newUser = new ExternalUser(
@@ -127,7 +123,7 @@ public class ExternalUserRepo {
     
     public static ExternalUser save(ExternalUser user) {
         if (user.getId() == null) {
-            user.setId(++userIdCounter);
+            user.setId(userIdCounter);
         }
         users.put(user.getId(), user);
         return user;

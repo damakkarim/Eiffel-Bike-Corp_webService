@@ -7,6 +7,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -17,7 +21,6 @@ import Services.IncorrectPasswordException;
 
 @Path("/ExternalUsers")
 public class ExternalUserService {
-	
 	
 	
 	
@@ -33,8 +36,15 @@ public class ExternalUserService {
 	                       .build();
 	    }
 
+	    
+	    Long c =3L;
 	    // Check required fields for UserAccount
 	    UserAccount account = user.getUserAccount();
+	    account.setBalance(400);
+	    account.setId(c);
+
+
+	    
 	    if (account == null || account.getUserName() == null || account.getCardnumber() == null ||
 	        account.getExpirationDate() == null || account.getCvv() == null) {
 	        return Response.status(Response.Status.BAD_REQUEST)
@@ -49,13 +59,33 @@ public class ExternalUserService {
 	                       .build();
 	    }
 
+	    // Send a request to save the UserAccount using the external API
+	    try {
+	        Client client = ClientBuilder.newClient();
+	        WebTarget target = client.target("http://localhost:8080/BanqueService/bank/Bank/save");
+	        Response apiResponse = target.request(MediaType.APPLICATION_JSON)
+	                                     .post(Entity.entity(account, MediaType.APPLICATION_JSON));
+
+	        if (apiResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+	            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+	                           .entity("Failed to save account: " + apiResponse.readEntity(String.class))
+	                           .build();
+	        }
+	    } catch (Exception e) {
+	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+	                       .entity("Error while calling the external API: " + e.getMessage())
+	                       .build();
+	    }
+
 	    // Map additional account details
 	    UserAccount newAccount = new UserAccount();
 	    newAccount.setUserName(account.getUserName());
-	    newAccount.setBalance(account.getBalance());
+	    newAccount.setBalance(400);
 	    newAccount.setCardnumber(account.getCardnumber());  // Cardnumber is now a String
 	    newAccount.setExpirationDate(account.getExpirationDate());
 	    newAccount.setCvv(account.getCvv());
+	    newAccount.setId(user.getId());
+
 
 	    // Link the UserAccount object to ExternalUser
 	    user.setUserAccount(newAccount);
