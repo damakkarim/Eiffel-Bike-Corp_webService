@@ -99,88 +99,101 @@
     </div>
 
     <script>
- // Récupération des données depuis le localStorage
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    const bike = JSON.parse(localStorage.getItem("selectedBike"));
+// Récupération des données depuis le localStorage
+const user = JSON.parse(localStorage.getItem("currentUser"));
+const bike = JSON.parse(localStorage.getItem("selectedBike"));
 
-    // Mise à jour des détails affichés
-    document.getElementById("userName").textContent = `Name: ${user?.name || "Unknown"}`;
-    document.getElementById("userEmail").textContent = `Email: ${user?.email || "Unknown"}`;
-    document.getElementById("bikeModel").textContent = `Model: ${bike?.model || "Unknown"}`;
-    document.getElementById("bikePrice").textContent = `Price: ${bike?.price || "Unknown"} USD`;
-    document.getElementById("bikeCondition").textContent = `Condition: ${bike?.condition || "Unknown"}`;
+// Mise à jour des détails affichés
+document.getElementById("userName").textContent = `Name: ${user?.name || "Unknown"}`;
+document.getElementById("userEmail").textContent = `Email: ${user?.email || "Unknown"}`;
+document.getElementById("bikeModel").textContent = `Model: ${bike?.model || "Unknown"}`;
+document.getElementById("bikePrice").textContent = `Price: ${bike?.price || "Unknown"} EU`;
+document.getElementById("bikeCondition").textContent = `Condition: ${bike?.condition || "Unknown"}`;
 
+// Validation des informations de carte bancaire et appel API
+document.getElementById("purchaseBtn").addEventListener("click", async () => {
+    const cardNumber = document.getElementById("cardNumber").value;
+    const expiryDate = document.getElementById("expiryDate").value;
+    const cvv = document.getElementById("cvv").value;
+    const errorMessageElement = document.getElementById("errorMessage");
 
-    // Validation des informations de carte bancaire et appel API
-    document.getElementById("purchaseBtn").addEventListener("click", async () => {
-        const cardNumber = document.getElementById("cardNumber").value;
-        const expiryDate = document.getElementById("expiryDate").value;
-        const cvv = document.getElementById("cvv").value;
-        const errorMessageElement = document.getElementById("errorMessage");
+    
+    
+    
+    // Réinitialisation des erreurs
+    errorMessageElement.textContent = "";
 
-        // Réinitialisation des erreurs
-        errorMessageElement.textContent = "";
+    // Vérifications
+    if (!cardNumber || !expiryDate || !cvv) {
+        errorMessageElement.textContent = "All fields are required.";
+        return;
+    }
 
-        // Vérifications
-        if (!cardNumber || !expiryDate || !cvv) {
-            errorMessageElement.textContent = "All fields are required.";
-            return;
-        }
+    const userAccount = user?.userAccount;
 
-        const userAccount = user?.userAccount;
+    if (!userAccount) {
+        errorMessageElement.textContent = "User account details not found.";
+        return;
+    }
 
-        if (!userAccount) {
-            errorMessageElement.textContent = "User account details not found.";
-            return;
-        }
+    if (
+        cardNumber !== userAccount.cardnumber ||
+        expiryDate !== userAccount.expirationDate ||
+        parseInt(cvv) !== userAccount.cvv
+    ) {
+        errorMessageElement.textContent = "Card details do not match.";
+        return;
+    }
 
-        if (
-            cardNumber !== userAccount.cardnumber ||
-            expiryDate !== userAccount.expirationDate ||
-            parseInt(cvv) !== userAccount.cvv
-        ) {
-            errorMessageElement.textContent = "Card details do not match.";
-            return;
-        }
+    // Préparation des données pour l'API
+    const paymentRequest = {
+        accountId: user.id,
+        amount: parseFloat(bike.price),
+    };
 
-        
-        console.log(user)
+    try {
+        // Appel API pour traiter le paiement
+        const response = await fetch("http://localhost:8080/BanqueService/bank/Bank/processPayment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(paymentRequest),
+        });
 
-        // Préparation des données pour l'API
-        const paymentRequest = {
-            accountId: user.id,
-            amount: parseFloat(bike.price),
-        };
-        
-        
-        
-        console.log(paymentRequest)
+        // Gestion de la réponse de l'API
+        if (response.ok) {
+            const transaction = await response.json();
+            alert(`Purchase successful! Transaction ID: ${transaction.id}`);
 
-        try {
-            // Appel API pour traiter le paiement
-            const response = await fetch("http://localhost:8080/BanqueService/bank/Bank/processPayment", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(paymentRequest),
-            });
+            // Supprimer le vélo après un achat réussi
+            try {
+                const deleteResponse = await fetch(`http://localhost:8080/BikeService/bike/bikes/delete/${bike.id}`, {
+                    method: "DELETE",
+                });
 
-            // Gestion de la réponse de l'API
-            if (response.ok) {
-                const transaction = await response.json();
-                alert(`Purchase successful! Transaction ID: ${transaction.id}`);
-                window.location.href = "HomeExternal.html";
-            } else {
-                const error = await response.text();
-                errorMessageElement.textContent = error;
+                if (deleteResponse.ok) {
+                    alert("Bike removed successfully!");
+                    window.location.href = "HomeExternal.html";
+                    localStorage.setItem("currentUser", JSON.stringify(CurrentUser));
+
+                } else {
+                    const deleteError = await deleteResponse.text();
+                    console.error("Error during bike deletion:", deleteError);
+                }
+            } catch (deleteError) {
+                console.error("Error during API call for bike deletion:", deleteError);
             }
-        } catch (error) {
-            console.error("Error during API call:", error);
-            errorMessageElement.textContent = "An error occurred during payment processing.";
+        } else {
+            const error = await response.text();
+            errorMessageElement.textContent = error;
         }
-    });
-
-    </script>
+    } catch (error) {
+        console.error("Error during API call:", error);
+        errorMessageElement.textContent = "An error occurred during payment processing.";
+    }
+});
+</script>
+    
 </body>
 </html>

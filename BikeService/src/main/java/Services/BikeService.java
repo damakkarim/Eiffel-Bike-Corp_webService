@@ -89,7 +89,20 @@ public class BikeService {
     
 
     
-    
+    @DELETE
+    @Path("/delete/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteBike(@PathParam("id") Long id) {
+        boolean isRemoved = BikeRepo.removeBike(id);
+        if (isRemoved) {
+            return Response.ok("Bike with ID " + id + " removed successfully.").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .entity("Bike with ID " + id + " not found.")
+                           .build();
+        }
+    }
+
     
     
     

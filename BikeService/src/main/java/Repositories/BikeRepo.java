@@ -53,6 +53,17 @@ public class BikeRepo {
     
     
     
+    
+    public static boolean removeBike(Long id) {
+        if (bikes.containsKey(id)) {
+            bikes.remove(id);
+            return true;
+        }
+        return false; // Retourne false si l'ID n'existe pas
+    }
+
+    
+    
     // Nouvelle méthode pour récupérer un vélo loué par un utilisateur
     public static Bike getRentedBikeByUser(Long userId) {
         return bikes.values().stream()
