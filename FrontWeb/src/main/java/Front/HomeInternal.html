@@ -375,29 +375,44 @@
 
      
      
-        async function    returnBike (bikeId) {
-        	// Send a POST request to add to the waitlist
+        async function returnBike(bikeId) {
+            // Ouvrir une fenêtre pour saisir les notes
+            const notesInput = prompt("Please add your notes about the bike (separate multiple notes with a comma):");
 
-            const returnResponse = await fetch(`http://localhost:8080/BikeService/bike/bikes/return/${bikeId}`, {
-                method: "POST"
-            });
-
-
-            if (returnResponse.ok) {
-                const message = await returnResponse.text();
-                alert(message); // Display success message
-                fetchBikes(); // Refresh the bike list
-
-            } else {
-                const errorMessage = await returnResponse.text();
-                console.error("Failed to return  this bike !", errorMessage);
-                alert(errorMessage); // Display failure message
-
+            // Vérifier si l'utilisateur a saisi des notes
+            if (notesInput === null) {
+                alert("Returning bike canceled.");
+                return; // Annuler si l'utilisateur appuie sur Annuler
             }
 
-        	
+            // Séparer les notes en tableau (par exemple, avec des virgules)
+            const notes = notesInput.split(",").map(note => note.trim()).filter(note => note.length > 0);
+
+            try {
+                // Envoyer une requête POST avec l'ID et les notes
+                const returnResponse = await fetch(`http://localhost:8080/BikeService/bike/bikes/return/${bikeId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(notes), // Envoyer les notes en tant que tableau JSON
+                });
+
+                if (returnResponse.ok) {
+                    const message = await returnResponse.text();
+                    alert(message); // Afficher un message de succès
+                    fetchBikes(); // Rafraîchir la liste des vélos
+                } else {
+                    const errorMessage = await returnResponse.text();
+                    console.error("Failed to return the bike:", errorMessage);
+                    alert("Failed to return the bike: " + errorMessage);
+                }
+            } catch (error) {
+                console.error("Error occurred while returning the bike:", error);
+                alert("An error occurred while returning the bike. Please try again.");
+            }
         }
-     
+
      
         async function rentBike(bikeId) {
             try {

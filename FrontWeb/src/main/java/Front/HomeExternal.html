@@ -144,7 +144,6 @@
                     <th>ID</th>
                     <th>Model</th>
                     <th>Condition</th>
-                    <th>Added Date</th>
                     <th>Notes</th>
                     <th>Price</th>
                     <th>Actions</th>
@@ -219,7 +218,6 @@
                             <td>${bike.id}</td>
                             <td>${bike.model}</td>
                             <td>${bike.condition}</td>
-                            <td>${bike.addedDate}</td>
                             <td>${bike.notes}</td>
                             <td>${convertedPrice} ${currency}</td>
                             <td>
@@ -261,6 +259,12 @@
             }
         }
 
+        
+        
+        function logout() {
+            // Redirection vers la page signin.html
+            window.location.href = "SignIn.html";
+        }
         // Initialize the page
         fetchUserDetails(userEmail);
     </script>
