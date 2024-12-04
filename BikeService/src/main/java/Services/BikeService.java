@@ -67,6 +67,33 @@ public class BikeService {
 
 	
 	
+	@POST
+	@Path("/add")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addBike(Bike bike) {
+	    try {
+	        // Call the add method from BikeRepo
+	        BikeRepo.ajouter(bike);
+
+	        // Return a success response
+	        return Response.status(Response.Status.CREATED)
+	                .entity("Bike added successfully: " + bike)
+	                .build();
+	    } catch (IllegalArgumentException e) {
+	        // Handle the case where the bike already exists
+	        return Response.status(Response.Status.CONFLICT)
+	                .entity("A bike with this ID already exists.")
+	                .build();
+	    } catch (Exception e) {
+	        // Handle other exceptions
+	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+	                .entity("Error while adding the bike: " + e.getMessage())
+	                .build();
+	    }
+	}
+
+	
 	
 	
 	

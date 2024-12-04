@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
 
 import Class.Bike;
 import Class.EmailAlert;
@@ -14,7 +12,9 @@ import Class.GustaveUser;
 
 public class BikeRepo {
 	private static Map<Long, Bike> bikes = new HashMap<>();
-
+	private   static Long BikeCounter=5L;
+	
+	
     static {
     	// Creating a bike with a list of notes
     	Bike bike1 = new Bike(1L, "Model A", 20.0, "poor", true, new ArrayList<>(List.of("-First bike", "-Needs repair", "-Popular model")), 5);
@@ -32,14 +32,20 @@ public class BikeRepo {
         
     }
 
+    
+    
     public static void ajouter(Bike bike) {
         if (!bikes.containsKey(bike.getId())) {
+            bike.setId(BikeCounter);
+            bike.setAvailable(true);
+
             bikes.put(bike.getId(), bike);
+            
+            BikeCounter++;
         } else {
-            System.out.println("Un vélo avec cet ID existe déjà.");
+            System.out.println("A bike with this ID already exists.");
         }
     }
-
     
     
     
@@ -102,12 +108,9 @@ public class BikeRepo {
         System.out.print("Rani dkhlt 0 !!! \n ");
 
     		
-        if (bike != null && !bike.isAvailable()) { // Vérifie si le vélo est non disponible
-//            bike.setAvailable(true); 
-//            bike.setRentedBy(null); 
-//            
-//
-//            bike.getWaitingList().remove(0);
+        if (bike != null && !bike.isAvailable()) { 
+           bike.setAvailable(true); 
+         bike.setRentedBy(null); 
             
             if (bike.getWaitingList() != null && !bike.getWaitingList().isEmpty()) {
                 GustaveUser headOfQueue = bike.getWaitingList().get(0); 

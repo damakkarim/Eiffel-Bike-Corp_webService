@@ -26,7 +26,12 @@ public class Bike implements Serializable {
 	
 
     
-    public GustaveUser getRentedBy() {
+    public Bike() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public GustaveUser getRentedBy() {
 		return RentedBy;
 	}
 

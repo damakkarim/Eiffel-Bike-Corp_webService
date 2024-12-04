@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Bike</title>
+    <style>
+        /* Styles CSS */
+        * {
+            font-family: 'Open Sans', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #111;
+            background-repeat: no-repeat;
+        }
+        .loginSection {
+            background: url(https://source.unsplash.com/TV2gg2kZD1o/1600x800);
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 450px;
+            text-align: center;
+            display: flex;
+            color: white;
+            box-shadow: 3px 10px 20px 5px rgba(0, 0, 0, .5);
+        }
+        .info {
+            width: 45%;
+            background: rgba(20, 20, 20, .8);
+            padding: 30px 0;
+            border-right: 5px solid rgba(30, 30, 30, .8);
+        }
+        .info h2 {
+            padding-top: 30px;
+            font-weight: 300;
+        }
+        .info p {
+            font-size: 18px;
+        }
+        .loginForm {
+            width: 70%;
+            padding: 30px 0;
+            background: rgba(20, 40, 40, .8);
+            transition: .2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .loginForm h2 {
+            font-weight: 300;
+        }
+        .inputFields {
+            margin: 15px 0;
+            font-size: 16px;
+            padding: 10px;
+            width: 250px;
+            border: 1px solid rgba(10, 180, 180, 1);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(20, 20, 20, .6);
+            color: white;
+            outline: none;
+        }
+        .noBullet {
+            list-style-type: none;
+            padding: 0;
+        }
+        #login-btn {
+            border: 1px solid rgb(10, 180, 180);
+            background: rgba(20, 20, 20, .6);
+            font-size: 18px;
+            color: white;
+            margin-top: 20px;
+            padding: 10px 50px;
+            cursor: pointer;
+            transition: .4s;
+            width: 250px;  /* Match the button width to input fields */
+            text-align: center; /* Ensure the text is centered */
+        }
+        #login-btn:hover {
+            background: rgba(20, 20, 20, .8);
+            padding: 10px 70px;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="loginSection">
+        <div class="info">
+            <h2>Add a New Bike</h2>
+            <p>Fill out the details to add a new bike to the system.</p>
+        </div>
+        <div class="loginForm">
+            <h2>Bike Form</h2>
+            <form id="addBikeForm">
+                <input type="text" class="inputFields" id="model" name="model" placeholder="Bike Model" required>
+                <input type="number" step="0.01" class="inputFields" id="price" name="price" placeholder="Price" required>
+                <select class="inputFields" id="condition" name="condition">
+                    <option value="New">New</option>
+                </select>
+                <button type="button" id="login-btn" onclick="confirmAdd()">Add Bike</button>
+            </form>
+        </div>
+    </div>
+   <script>
+    function confirmAdd() {
+        const model = document.getElementById('model').value;
+        const price = document.getElementById('price').value;
+        const condition = document.getElementById('condition').value;
+
+        if (model && price) {
+            const confirmation = confirm(`Would you confirm the add of this bike?\nModel: ${model}\nPrice: ${price}`);
+            if (confirmation) {
+                addBike(model, price, condition);
+            }
+        } else {
+            alert('Please fill out all required fields.');
+        }
+    }
+
+    function addBike(model, price, condition) {
+        const bike = {
+            model: model,
+            price: parseFloat(price),
+            condition: condition
+        };
+
+        fetch('http://localhost:8080/BikeService/bike/bikes/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bike)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Bike added successfully!');
+                // Optionally store the user's information before redirection
+                const user = { name: 'John Doe' };  // Replace with actual user data
+                localStorage.setItem('user', JSON.stringify(user));  // Save user data to localStorage
+
+                // Redirect to homeInternal.html after success
+                window.location.href = 'homeInternal.html';
+            } else {
+                return response.text().then(errorMessage => {
+                    throw new Error(errorMessage);
+                });
+            }
+        })
+        .catch(error => {
+            alert('Error adding bike: ' + error.message);
+        });
+    }
+</script>
+
+</body>
+</html>

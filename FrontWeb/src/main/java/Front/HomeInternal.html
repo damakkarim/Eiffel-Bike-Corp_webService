@@ -138,6 +138,30 @@
         .action-btn:focus {
             outline: none;
         }
+        
+        
+.AddBikeBtn {
+    background-color: #003366; /* Bleu marine */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    position: absolute; /* Positionner par rapport au parent */
+    top: 10px; /* Ajustez selon la marge souhaitée */
+    right: 150px; /* Ajustez selon la marge souhaitée */
+    z-index: 2; /* Placer AddBike devant Deconnect */
+}
+
+
+.AddBikeBtn:hover {
+    background-color: #002244; /* Teinte plus foncée au survol */
+}
+
+
+        
     </style>
 </head>
 <body>
@@ -148,6 +172,8 @@
     </div>
     
 <button id="logoutBtn" class="action-btn logout-btn" onclick="logout()">Deconnect</button>
+<button id="AddBikeBtn" class="AddBikeBtn" onclick="AddBike()">AddBike</button>
+
     <!-- Message will be displayed here -->
 
     <!-- Bike Section -->
@@ -161,7 +187,6 @@
                     <th>Condition</th>
                     
                     
-                    <th>Added Date</th>
                                              <th>Notes</th>
                     
                     <th>Status</th>
@@ -225,51 +250,45 @@
         
 
         
-        
-
-     // Function to fetch and display bikes
         async function fetchBikes() {
             try {
                 const response = await fetch(bikeServiceUrl);
                 const bikes = await response.json();
 
-                // Select table body
+                // Check if the current user has any bike rented
+                const userHasRentedBike = Object.values(bikes).some(bike =>
+                    bike.rentedBy && bike.rentedBy.id === CurrentUser.id
+                );
+
+                // Select the table body to display bikes
                 const bikeTableBody = document.getElementById("bikeTableBody");
                 bikeTableBody.innerHTML = "";
 
-                // Assume the userId is available in localStorage
-                const userId = localStorage.getItem('userId'); // Get the userId from localStorage
-
-                // Iterate over the bikes and add them to the table
+                // Iterate over bikes and add rows to the table
                 Object.values(bikes).forEach(bike => {
                     const row = document.createElement("tr");
 
                     // If the bike is rented, add the 'rented-bike' class
                     if (!bike.available) {
-                        row.classList.add("rented-bike"); // Add the yellow background class
+                        row.classList.add("rented-bike");
                     }
 
-                    // ID column
+                    // ID Cell
                     const idCell = document.createElement("td");
                     idCell.textContent = bike.id;
                     row.appendChild(idCell);
 
-                    // Model column
+                    // Model Cell
                     const modelCell = document.createElement("td");
                     modelCell.textContent = bike.model || "N/A";
                     row.appendChild(modelCell);
 
-                    // Condition column
+                    // Condition Cell
                     const conditionCell = document.createElement("td");
                     conditionCell.textContent = bike.condition || "N/A";
                     row.appendChild(conditionCell);
 
-                    // Added Date column
-                    const dateCell = document.createElement("td");
-                    dateCell.textContent = bike.dateAdded || "N/A";
-                    row.appendChild(dateCell);
-
-                    // Notes column
+                    // Notes Cell
                     const notesCell = document.createElement("td");
                     if (bike.notes && Array.isArray(bike.notes)) {
                         const lastFiveNotes = bike.notes.slice(-5);
@@ -283,7 +302,7 @@
                     }
                     row.appendChild(notesCell);
 
-                    // Status column
+                    // Status Cell
                     const statusCell = document.createElement("td");
                     const statusIndicator = document.createElement("span");
                     let statusText = "";
@@ -303,22 +322,11 @@
                     statusCell.appendChild(statusIndicator);
                     row.appendChild(statusCell);
 
-                    // Actions column
+                    // Actions Cell
                     const actionsCell = document.createElement("td");
 
-                    
-
-                    // If the bike is available, show Rent button
-                    if (bike.rentedBy==null) {
-                        const rentButton = document.createElement("button");
-                        rentButton.textContent = "Rent";
-                        rentButton.classList.add("action-btn", "rent-btn");
-                        rentButton.onclick = () => {
-                            rentBike(bike.id);
-                        };
-                        actionsCell.appendChild(rentButton);
-
-                    } else if ( bike.rentedBy.id === CurrentUser.id) {
+                    // If the bike is currently rented by the current user, show Return button
+                    if (bike.rentedBy && bike.rentedBy.id === CurrentUser.id) {
                         const returnButton = document.createElement("button");
                         returnButton.textContent = "Return";
                         returnButton.classList.add("action-btn", "return-btn");
@@ -326,18 +334,33 @@
                             returnBike(bike.id);
                         };
                         actionsCell.appendChild(returnButton);
-
-                    }  else if (bike.rentedBy!=null) { // If the bike is not available and not rented by the current user
-                    	
-                    	console.log("ena fil cas tee waitng list ")
+                    }
+                    // If user has no rented bike and this bike is available, show Rent button
+                    else if (!userHasRentedBike && bike.available) {
+                        const rentButton = document.createElement("button");
+                        rentButton.textContent = "Rent";
+                        rentButton.classList.add("action-btn", "rent-btn");
+                        rentButton.onclick = () => {
+                            rentBike(bike.id);
+                        };
+                        actionsCell.appendChild(rentButton);
+                    }
+                    // If user has no rented bike and bike is not available, show Add to Waitlist
+                    else if (!userHasRentedBike && bike.rentedBy && bike.rentedBy.id !== CurrentUser.id) {
                         const waitlistButton = document.createElement("button");
                         waitlistButton.textContent = "Add to Waitlist";
                         waitlistButton.classList.add("action-btn", "waitlist-btn");
                         waitlistButton.onclick = () => {
                             addToWaitlist(bike.id);
-                            alert("You have added this bike to the waitlist.");
                         };
                         actionsCell.appendChild(waitlistButton);
+                    }
+                    // If user has a rented bike, no actions allowed
+                    else if (userHasRentedBike) {
+                        const noActionText = document.createElement("span");
+                        noActionText.textContent = "Return your current bike first";
+                        noActionText.style.color = "#888";
+                        actionsCell.appendChild(noActionText);
                     }
 
                     row.appendChild(actionsCell);
@@ -366,11 +389,8 @@
                 fetchBikes(); // Refresh the bike list
 
             } else {
-
                 const errorMessage = await returnResponse.text();
-
                 console.error("Failed to return  this bike !", errorMessage);
-
                 alert(errorMessage); // Display failure message
 
             }
@@ -537,7 +557,14 @@ async function addToWaitlist(bikeId) {
 
 
 
-        
+function AddBike() {
+    // Récupérer la clé de l'utilisateur (par exemple depuis le localStorage, ou une autre méthode de stockage)
+    const user = localStorage.getItem('user'); // Remplace par la méthode de récupération de la clé de l'utilisateur
+    
+    // Rediriger l'utilisateur vers le formulaire d'ajout de vélo, avec la clé en paramètre
+    window.location.href = `AddBikeForm.html?userKey=${user}`;
+}
+
         
         
         
