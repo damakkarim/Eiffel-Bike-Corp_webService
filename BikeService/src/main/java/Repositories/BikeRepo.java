@@ -96,8 +96,73 @@ public class BikeRepo {
     
     
     
-    
-    
+//public static void retourner(Long bikeId,List <String> notes) {
+//
+//        
+//    	Bike bike = bikes.get(bikeId);
+//    	
+//        System.out.print("Rani dkhlt 0 !!! \n ");
+//
+//    		
+//        if (bike != null && !bike.isAvailable()) { // Vérifie si le vélo est non disponible
+////            bike.setAvailable(true); 
+////            bike.setRentedBy(null); 
+////            
+////
+////            bike.getWaitingList().remove(0);
+//            
+//            if (bike.getWaitingList() != null && !bike.getWaitingList().isEmpty()) {
+//                GustaveUser headOfQueue = bike.getWaitingList().get(0); 
+//                bike.getWaitingList().remove(0); 
+//                bike.setRentedBy(null);
+//
+//                
+//                
+//                System.out.print("Rani dkhlt 1 !!! \n ");
+//                // Envoie un email à cette personne
+//                String recipientEmail = headOfQueue.getEmail();
+//                String subject = "Vélo disponible : " + bike.getModel();
+//                String body = "Bonjour " + headOfQueue.getName() + ",\n\n" +
+//                              "Le vélo modèle " + bike.getModel() + " est maintenant disponible.\n" +
+//                              "Merci de nous contacter pour confirmer votre location.\n\n" +
+//                              "Cordialement,\nVotre équipe de gestion des vélos.";
+//                System.out.print(recipientEmail);
+//                EmailAlert.sendEmail(recipientEmail, subject, body);
+//            }
+//
+//            if (notes != null && !notes.isEmpty()) { 
+//                if (bike.getNotes() == null) {
+//                    bike.setNotes(new ArrayList<>()); // Crée une nouvelle liste de notes si elle est nulle
+//                }
+//                bike.setNotes(notes); // Ajoute la nouvelle note à la liste
+//                
+//                if (bike.getWaitingList() != null && !bike.getWaitingList().isEmpty()) {
+//                    GustaveUser headOfQueue = bike.getWaitingList().get(0); 
+//                    bike.getWaitingList().remove(0); 
+//                    bike.setRentedBy(null);
+//                    
+//                    
+//                    System.out.print("Rani dkhlt 2 !!! \n ");
+//
+//
+//                    // Envoie un email à cette personne
+//                    String recipientEmail = headOfQueue.getEmail();
+//                    String subject = "Vélo disponible : " + bike.getModel();
+//                    String body = "Bonjour " + headOfQueue.getName() + ",\n\n" +
+//                                  "Le vélo modèle " + bike.getModel() + " est maintenant disponible.\n" +
+//                                  "Merci de nous contacter pour confirmer votre location.\n\n" +
+//                                  "Cordialement,\nVotre équipe de gestion des vélos.";
+//                    EmailAlert.sendEmail(recipientEmail, subject, body);
+//                }
+//
+//         
+//                
+//            }
+//            
+//            
+//            
+//        }
+//    
  
     
     public static void retourner(Long bikeId,List <String> notes) {
@@ -120,7 +185,7 @@ public class BikeRepo {
                 
                 
                 System.out.print("Rani dkhlt 1 !!! \n ");
-                // Envoie un email à cette personne
+                
                 String recipientEmail = headOfQueue.getEmail();
                 String subject = "Vélo disponible : " + bike.getModel();
                 String body = "Bonjour " + headOfQueue.getName() + ",\n\n" +

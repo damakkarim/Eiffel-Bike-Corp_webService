@@ -9,7 +9,7 @@ public class EmailAlert {
     public static void sendEmail(String recipient, String subject, String body) {
         // Sender's email and app password
         final String senderEmail = "mahmoud.09092001@gmail.com";
-        final String senderPassword = "mahmoudazizammar";
+        final String senderPassword = "lcpw vumv qidt wnoc";
 
         // SMTP Server Properties
         Properties properties = new Properties();
@@ -46,8 +46,5 @@ public class EmailAlert {
         }
     }
 
-    public static void main(String[] args) {
-        // Example usage
-        sendEmail("siwar.nj1998@gmail.com ", "Macdooo", "salary 10$");
-    }
+   
 }
